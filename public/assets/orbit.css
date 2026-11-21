@@ -1,0 +1,323 @@
+.observatory {
+  background: #06121d;
+  isolation: isolate;
+}
+.observatory::before {
+  background:
+    radial-gradient(ellipse at 72% 51%, #104e6029, transparent 53%),
+    radial-gradient(ellipse at 14% 82%, #18486324, transparent 56%);
+}
+.observatory::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    radial-gradient(#a5d1df55 0.65px, transparent 0.9px),
+    radial-gradient(#7da9c247 0.6px, transparent 1px);
+  background-size:
+    109px 79px,
+    173px 137px;
+  background-position:
+    34px 45px,
+    87px 12px;
+}
+.observatory-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 0.79fr 1.21fr;
+  grid-template-rows: minmax(380px, 1fr) auto;
+  align-items: center;
+  min-height: clamp(560px, 77svh, 845px);
+  padding-block: 20px 0;
+}
+.observatory .hero-copy {
+  padding-block: 48px 30px;
+  pointer-events: none;
+}
+.observatory .hero-copy a {
+  pointer-events: auto;
+}
+.observatory .hero-intro {
+  max-width: 440px;
+  color: #b9cad4;
+}
+.observatory h1 {
+  font-size: clamp(3.65rem, 5.4vw, 5.7rem);
+  line-height: 1.04;
+}
+.observatory h1 em {
+  color: #ffa567;
+  background: none;
+}
+.orbit-stage {
+  isolation: isolate;
+  position: relative;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 400px;
+  margin-inline: -3% -5%;
+  touch-action: pan-y;
+}
+.orbit-fallback,
+.orbit-canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
+}
+.orbit-fallback {
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse at center, black 38%, transparent 75%);
+  pointer-events: none;
+}
+.orbit-stage.ready .orbit-fallback {
+  display: none;
+}
+.orbit-canvas {
+  display: none;
+  touch-action: none;
+  cursor: grab;
+  outline-offset: -3px;
+}
+.ready .orbit-canvas {
+  display: block;
+}
+.orbit-canvas:active {
+  cursor: grabbing;
+}
+.orbit-eyeline {
+  position: absolute;
+  inset: 5% auto auto 7%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a6c8d3;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font: 0.76rem/1.5 var(--mono);
+  pointer-events: none;
+}
+.orbit-eyeline i {
+  width: 25px;
+  height: 1px;
+  background: #5ba3a8;
+}
+.orbit-node {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 3px 8px;
+  color: #d8f2ef;
+  font: 500 0.82rem/1.3 var(--mono);
+  text-shadow:
+    0 1px 6px #020911,
+    1px 1px 2px #020911;
+  border-radius: 4px;
+}
+.orbit-node span {
+  padding: 3px 6px;
+  background: #061722d9;
+  border-radius: 3px;
+}
+.orbit-node i {
+  width: 8px;
+  height: 8px;
+  background: #77f0d6;
+  border: 1px solid #c1fff3;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 4px #4ae8c51e,
+    0 0 10px #58d1c7;
+}
+.orbit-node-0 {
+  left: 22%;
+  top: 24%;
+}
+.orbit-node-1 {
+  left: 62%;
+  top: 31%;
+}
+.orbit-node-2 {
+  left: 57%;
+  top: 72%;
+}
+.orbit-node-1 i {
+  background: #ffad68;
+  box-shadow:
+    0 0 0 4px #f89d4325,
+    0 0 12px #f99b57;
+  border-color: #ffe0bb;
+}
+.orbit-node-2 i {
+  background: #a4d7ff;
+  box-shadow:
+    0 0 0 4px #78beff24,
+    0 0 12px #78bdf8;
+}
+.orbit-node:hover span,
+.orbit-node[aria-expanded="true"] span {
+  color: white;
+  outline: 1px solid #66929f;
+}
+.orbit-foot {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  border-top: 1px solid #66859444;
+  padding-block: 15px;
+  position: relative;
+  z-index: 1;
+}
+.orbit-foot p {
+  color: #a5bec8;
+  font: 0.8rem/1.6 var(--mono);
+}
+.orbit-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.orbit-controls button,
+.orbit-card button {
+  color: #e4eff3;
+  background: #0b202ec9;
+  border: 1px solid #5a79875c;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font: 0.8rem/1.3 var(--mono);
+  min-height: 32px;
+}
+.orbit-controls button:first-child,
+.orbit-controls button:nth-child(2) {
+  font-size: 1.1rem;
+  padding: 3px;
+  width: 33px;
+}
+.orbit-controls button:hover,
+.orbit-card button:hover {
+  border-color: #fea86a;
+}
+.orbit-card {
+  position: absolute;
+  inset: auto 3% 3% auto;
+  width: min(320px, 94%);
+  background: #0b2637f7;
+  color: white;
+  border: 1px solid #366376;
+  border-radius: 13px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 45px #0006;
+  z-index: 3;
+}
+.orbit-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #a8ccc9;
+  font: 0.77rem/1.4 var(--mono);
+}
+.orbit-card-head button {
+  padding: 2px 8px;
+  min-height: 27px;
+  font-size: 1rem;
+}
+.orbit-card h2 {
+  font-size: 1.45rem;
+  margin: 5px 0;
+}
+.orbit-card p {
+  line-height: 1.55;
+  font-size: 0.9rem;
+  color: #d0e0e9;
+}
+.orbit-card a {
+  display: inline-block;
+  font-weight: 500;
+  color: #ffb077;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  margin-top: 8px;
+  font-size: 0.88rem;
+}
+html[lang="fa"] .orbit-eyeline {
+  letter-spacing: 0;
+}
+html[lang="fa"] .observatory::before {
+  transform: scaleX(-1);
+}
+html[lang="fa"] .orbit-card {
+  inset: auto auto 3% 3%;
+}
+html[lang="fa"] .orbit-eyeline {
+  inset: 5% 7% auto auto;
+}
+@media (max-width: 900px) {
+  .observatory-inner {
+    grid-template-columns: 0.9fr 1.1fr;
+    min-height: 570px;
+  }
+  .observatory .hero-intro {
+    font-size: 1rem;
+  }
+  .orbit-node {
+    font-size: 0.76rem;
+  }
+  .orbit-stage {
+    margin-inline: -5% -5%;
+  }
+}
+@media (max-width: 740px) {
+  .observatory-inner {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    min-height: 0;
+  }
+  .observatory .hero-copy {
+    padding: 20px 0 4px;
+  }
+  .observatory h1 {
+    font-size: clamp(3.4rem, 10.5vw, 4.8rem);
+  }
+  .observatory .hero-intro {
+    max-width: 580px;
+    margin-top: 12px;
+  }
+  .observatory .hero-buttons {
+    margin-top: 16px;
+  }
+  .orbit-stage {
+    margin: 0 -4%;
+    min-height: 0;
+    height: clamp(300px, 76vw, 410px);
+  }
+  .orbit-foot {
+    padding: 11px 0 14px;
+    gap: 6px;
+  }
+  .orbit-foot p {
+    font-size: 0.75rem;
+  }
+  .orbit-eyeline {
+    top: 3%;
+  }
+  .orbit-controls button {
+    font-size: 0.75rem;
+  }
+  .orbit-card {
+    bottom: 3px;
+  }
+  .orbit-footer {
+    gap: 6px;
+  }
+}

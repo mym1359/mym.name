@@ -1,0 +1,23 @@
+{
+  "name": "mym-banking-intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "English and Persian portfolio and client workspace for MYM’s applied AI and banking consultancy.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@fontsource-variable/vazirmatn": "5.3.0",
+    "@fontsource/poppins": "5.3.0",
+    "@supabase/supabase-js": "2.119.2",
+    "esbuild": "0.28.2"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.17"
+  }
+}

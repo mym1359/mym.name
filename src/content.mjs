@@ -1,0 +1,308 @@
+export const name = {
+  en: "Mohammad Yadollah Moghaddam",
+  fa: "محمد یداله مقدم",
+};
+export const copy = {
+  en: {
+    home: "Home",
+    work: "Projects",
+    expertise: "Expertise",
+    about: "About",
+    portal: "Client portal",
+    admin: "Studio dashboard",
+    privacy: "Privacy",
+    menu: "Menu",
+    skip: "Skip to content",
+    brand: "AI Consulting",
+    language: "فارسی",
+    consult: "Request a consultation",
+    explore: "Explore projects",
+    back: "All projects",
+    identity: "Independent AI consulting",
+    headline: ["Work smarter.", "With AI."],
+    intro:
+      "I’m Mohammad Yadollah Moghaddam. I bring two decades of banking experience and a background in statistics to the design of practical AI systems.",
+    field: "Interactive project map",
+    mapHint: "Select a signal to explore",
+    signal: ["Darj", "Sepam", "U.S. initiative"],
+    metrics: [
+      ["20", "years in banking"],
+      ["≈15", "years programming"],
+      ["2", "banking systems"],
+    ],
+    workEye: "Project portfolio",
+    workTitle: "Selected work",
+    workLead:
+      "Two systems designed for Bank Maskan, and the next chapter of that work.",
+    filters: ["All projects", "Banking systems", "In development"],
+    projectLink: "View project",
+    bank: "Bank Maskan",
+    rd: "Independent initiative",
+    context: "The problem",
+    concept: "The design",
+    stage: "Current scope",
+    expertEye: "Consulting services",
+    expertTitle: "Where I can help",
+    expertLead:
+      "Start with one workflow. Together we can define the problem, test an approach and decide what is worth building.",
+    services: [
+      [
+        "workflow",
+        "AI opportunity mapping",
+        "Map a team’s current workflow, identify repetitive decisions and select one use case with a clear measure of success.",
+        "A prioritised use case and a pilot brief.",
+      ],
+      [
+        "assistant",
+        "Knowledge assistants",
+        "Scope an assistant that helps staff find answers in approved material, with source references and a route to human review.",
+        "A question set, source inventory and evaluation plan.",
+      ],
+      [
+        "analytics",
+        "Statistical evaluation",
+        "Design checks for data quality, model performance and the cases that need closer human attention.",
+        "A baseline and a practical measurement plan.",
+      ],
+    ],
+    deliverable: "What you take away",
+    aboutEye: "About MYM",
+    aboutTitle: "From the banking desk to the codebase.",
+    aboutIntro:
+      "I studied statistics at the University of Birjand and have spent 20 years at Bank Maskan. About 15 years of programming taught me how to turn an operational question into software.",
+    aboutMore:
+      "Over the past year I have focused on AI and begun formal training in AI consulting. My work starts with the people who know a process best and the evidence they need to improve it.",
+    bio: "My background",
+    degree: "BSc in Statistics",
+    university: "University of Birjand",
+    employer: "Bank Maskan",
+    experience: "Banking operations",
+    current: "Current focus",
+    focus: "Applied AI consulting",
+    contact: "Have a workflow in mind?",
+    contactCopy:
+      "Tell me what your team is trying to do and where the process slows down.",
+    credit: "Independent AI consulting",
+    github: "GitHub",
+    details: "Project overview",
+    privacyTitle: "How this site uses data",
+    privacyText: [
+      "Public pages can be read without an account. On the configured production site, the dashboard counts page views by public page, language and day. The application does not store a visitor’s IP address or create a cross-site advertising profile.",
+      "If you use the portal, Supabase handles your email or Google sign-in. Your account, consultation requests and messages are used to provide the service. You and the designated administrator can read your conversations. Hosting and authentication providers may keep their own operational logs.",
+      "Keep bank records, account numbers and customer information out of consultation messages. For a question about your data or a deletion request, send a message to the administrator through your workspace.",
+    ],
+    signTitle: "Your client workspace",
+    signIntro:
+      "Start a consultation, follow its progress and read replies in one place.",
+    auth: "Account access",
+    signEmail: "Email address",
+    emailButton: "Email me a sign-in link",
+    google: "Continue with Google",
+    or: "or",
+    unavailable:
+      "Live sign-in will open when the production workspace is connected.",
+    demo: "Explore client preview",
+    demoAdmin: "Explore dashboard preview",
+    dashboardTitle: "Consultation dashboard",
+    dashIntro: "Review requests, reply to clients and monitor site activity.",
+    nojs: "Enable JavaScript to sign in and manage requests.",
+    notFound: "Page not found",
+    notFoundCopy:
+      "This page may have moved. Return to the homepage to explore the studio.",
+  },
+  fa: {
+    home: "خانه",
+    work: "پروژه‌ها",
+    expertise: "خدمات",
+    about: "درباره من",
+    portal: "پنل مشتری",
+    admin: "داشبورد مدیریت",
+    privacy: "حریم خصوصی",
+    menu: "منو",
+    skip: "رفتن به محتوا",
+    brand: "مشاوره هوش مصنوعی",
+    language: "English",
+    consult: "درخواست مشاوره",
+    explore: "مشاهده پروژه‌ها",
+    back: "همه پروژه‌ها",
+    identity: "مشاوره مستقل هوش مصنوعی",
+    headline: ["باهوش", "کار کن."],
+    intro:
+      "من محمد یداله مقدم هستم. از بیست سال تجربه در بانک و آنچه در رشتهٔ آمار آموخته‌ام، برای طراحی سامانه‌های کاربردی هوش مصنوعی استفاده می‌کنم.",
+    field: "نقشه تعاملی پروژه‌ها",
+    mapHint: "برای دیدن پروژه، یک نقطه را انتخاب کنید",
+    signal: ["درج", "سپام", "طرح آمریکا"],
+    metrics: [
+      ["۲۰", "سال تجربه بانکی"],
+      ["حدود ۱۵", "سال برنامه‌نویسی"],
+      ["۲", "سامانه بانکی"],
+    ],
+    workEye: "نمونه‌کارها",
+    workTitle: "پروژه‌های منتخب",
+    workLead:
+      "دو سامانه که برای بانک مسکن طراحی کردم و طرح تازه‌ای که از دل این تجربه شکل گرفت.",
+    filters: ["همه پروژه‌ها", "سامانه‌های بانکی", "در حال توسعه"],
+    projectLink: "مشاهده پروژه",
+    bank: "بانک مسکن",
+    rd: "طرح مستقل",
+    context: "مسئله",
+    concept: "ایده و طراحی",
+    stage: "وضعیت کنونی",
+    expertEye: "خدمات مشاوره",
+    expertTitle: "چطور می‌توانم کمک کنم؟",
+    expertLead:
+      "از یک فرایند کاری شروع می‌کنیم. مسئله را تعریف می‌کنیم، یک روش را می‌سنجیم و تصمیم می‌گیریم کدام راه‌حل ارزش ساختن دارد.",
+    services: [
+      [
+        "workflow",
+        "شناسایی فرصت‌های هوش مصنوعی",
+        "فرایند فعلی تیم را بررسی می‌کنیم، تصمیم‌های تکرارشونده را پیدا می‌کنیم و برای یک کاربرد مشخص، معیار موفقیت تعیین می‌کنیم.",
+        "اولویت‌بندی کاربردها و شرح یک طرح آزمایشی.",
+      ],
+      [
+        "assistant",
+        "طراحی دستیار دانش سازمانی",
+        "دامنهٔ دستیاری را تعریف می‌کنیم که به کارکنان برای یافتن پاسخ در منابع تأییدشده کمک کند و موارد مبهم را به کارشناس ارجاع دهد.",
+        "مجموعهٔ پرسش‌ها، فهرست منابع و برنامهٔ ارزیابی.",
+      ],
+      [
+        "analytics",
+        "ارزیابی آماری",
+        "برای کیفیت داده‌ها، عملکرد مدل و شناسایی موارد نیازمند بررسی انسانی معیار تعیین می‌کنیم.",
+        "مبنای مقایسه و یک برنامهٔ عملی سنجش.",
+      ],
+    ],
+    deliverable: "خروجی همکاری",
+    aboutEye: "درباره MYM",
+    aboutTitle: "از پشت میز بانک تا طراحی نرم‌افزار",
+    aboutIntro:
+      "کارشناسی آمارم را از دانشگاه بیرجند گرفتم و بیست سال است که در بانک مسکن کار می‌کنم. حدود پانزده سال برنامه‌نویسی به من یاد داده است چطور یک مسئلهٔ واقعی در محیط کار را به نرم‌افزار تبدیل کنم.",
+    aboutMore:
+      "در یک سال گذشته بر هوش مصنوعی تمرکز کرده‌ام و دورهٔ مشاورهٔ هوش مصنوعی را شروع کرده‌ام. برای من نقطهٔ شروع هر پروژه، گفت‌وگو با افرادی است که آن فرایند را می‌شناسند و می‌دانند برای بهتر شدنش چه شواهدی لازم است.",
+    bio: "مسیر کاری من",
+    degree: "کارشناسی آمار",
+    university: "دانشگاه بیرجند",
+    employer: "بانک مسکن",
+    experience: "تجربهٔ عملیات بانکی",
+    current: "تمرکز کنونی",
+    focus: "مشاوره هوش مصنوعی کاربردی",
+    contact: "کدام فرایند کاری ذهن شما را درگیر کرده؟",
+    contactCopy:
+      "بنویسید تیم شما می‌خواهد چه کاری انجام دهد و چه چیزی باعث کندی آن شده است.",
+    credit: "مشاوره مستقل هوش مصنوعی",
+    github: "گیت‌هاب",
+    details: "معرفی پروژه",
+    privacyTitle: "اطلاعات شما چگونه استفاده می‌شود؟",
+    privacyText: [
+      "صفحات عمومی بدون حساب کاربری قابل مشاهده‌اند. در نسخهٔ عملیاتی سایت، تعداد بازدیدها به تفکیک صفحهٔ عمومی، زبان و روز شمرده می‌شود. برنامه نشانی اینترنتی بازدیدکننده را ذخیره نمی‌کند و برای تبلیغات بین سایت‌ها پروفایل نمی‌سازد.",
+      "برای ورود با گوگل یا ایمیل، احراز هویت را Supabase انجام می‌دهد. از حساب کاربری، درخواست‌ها و پیام‌ها برای ارائهٔ مشاوره استفاده می‌شود. شما و مدیر تعیین‌شده می‌توانید گفت‌وگوهایتان را بخوانید. ارائه‌دهندگان میزبانی و ورود ممکن است گزارش‌های عملیاتی خود را نگه دارند.",
+      "لطفاً پروندهٔ بانکی، شماره حساب یا اطلاعات مشتریان را در پیام‌ها وارد نکنید. برای پرسش دربارهٔ اطلاعات خود یا درخواست حذف آن، از پنل کاربری به مدیر پیام دهید.",
+    ],
+    signTitle: "پنل مشاوره شما",
+    signIntro:
+      "درخواست مشاوره ثبت کنید، وضعیت آن را ببینید و پاسخ‌ها را در همین‌جا بخوانید.",
+    auth: "ورود به حساب",
+    signEmail: "نشانی ایمیل",
+    emailButton: "ارسال لینک ورود به ایمیل",
+    google: "ورود با گوگل",
+    or: "یا",
+    unavailable: "ورود به حساب پس از اتصال سرویس عملیاتی فعال می‌شود.",
+    demo: "مشاهده نمونه پنل مشتری",
+    demoAdmin: "مشاهده نمونه داشبورد",
+    dashboardTitle: "داشبورد مشاوره",
+    dashIntro:
+      "درخواست‌ها را بررسی کنید، به مشتریان پاسخ دهید و آمار بازدید سایت را ببینید.",
+    nojs: "برای ورود و مدیریت درخواست‌ها جاوااسکریپت را فعال کنید.",
+    notFound: "صفحه پیدا نشد",
+    notFoundCopy:
+      "ممکن است نشانی صفحه تغییر کرده باشد. از صفحهٔ اصلی وارد شوید.",
+  },
+};
+export const projects = [
+  {
+    id: "darj",
+    type: "bank",
+    en: {
+      name: "Darj",
+      subtitle: "Intelligent collections",
+      summary:
+        "A system designed for Bank Maskan to support the work of following up on outstanding bank receivables.",
+      tags: ["Banking", "Collections"],
+      parts: [
+        "Collections work involves keeping track of outstanding balances and the next follow-up. Staff need to understand the context of each case.",
+        "I designed Darj around intelligent receivables management at Bank Maskan. Its focus is the collections workflow and the staff responsible for follow-up.",
+        "This project informed my subsequent work on connecting collections with credit assessment. Internal bank data and performance figures are outside this public overview.",
+      ],
+    },
+    fa: {
+      name: "درج",
+      subtitle: "وصول هوشمند مطالبات",
+      summary:
+        "سامانه‌ای که برای بانک مسکن و با هدف پشتیبانی از فرایند پیگیری مطالبات معوق بانکی طراحی کردم.",
+      tags: ["بانکداری", "وصول مطالبات"],
+      parts: [
+        "کار وصول مطالبات به پیگیری مانده‌ها و اقدام بعدی هر پرونده نیاز دارد. کارشناس باید بتواند وضعیت هر پرونده را در بستر خودش ببیند.",
+        "در طراحی درج، محور کارم مدیریت هوشمند مطالبات در بانک مسکن بود. این سامانه بر فرایند وصول و نیاز همکارانی تمرکز دارد که پیگیری را انجام می‌دهند.",
+        "تجربهٔ طراحی درج، مبنای بررسی ارتباط بین وصول مطالبات و اعتبارسنجی در طرح بعدی من شد. این معرفی شامل داده‌های داخلی بانک یا ارقام عملکردی نیست.",
+      ],
+    },
+  },
+  {
+    id: "sepam",
+    type: "bank",
+    en: {
+      name: "Sepam",
+      subtitle: "Banking knowledge assistant",
+      summary:
+        "An intelligent assistant designed for banking services, lending operations and customer credit assessment at Bank Maskan.",
+      tags: ["AI assistant", "Lending"],
+      parts: [
+        "Banking staff work across service enquiries, lending processes and customer assessment. Each task depends on context and sound judgement.",
+        "I designed Sepam as an intelligent assistant for these banking workflows, with particular attention to services, lending and credit assessment.",
+        "The design work helped shape my approach to staff-facing assistance and the questions that need human review.",
+      ],
+    },
+    fa: {
+      name: "سپام",
+      subtitle: "دستیار هوشمند امور بانکی",
+      summary:
+        "دستیاری برای خدمات بانکی، امور تسهیلات و اعتبارسنجی هوشمند مشتریان که برای بانک مسکن طراحی کردم.",
+      tags: ["دستیار هوشمند", "تسهیلات"],
+      parts: [
+        "کارکنان بانک هم‌زمان با پرسش‌های خدماتی، پرونده‌های تسهیلات و ارزیابی مشتریان سروکار دارند. هر بخش به اطلاعات مرتبط و قضاوت کارشناسی نیاز دارد.",
+        "سپام را به‌عنوان دستیار هوشمند این فرایندها طراحی کردم و خدمات بانکی، تسهیلات و اعتبارسنجی مشتریان را در مرکز توجه قرار دادم.",
+        "طراحی سپام به من کمک کرد نیاز کارکنان به دستیار هوشمند و مواردی را که به بررسی انسانی احتیاج دارند، دقیق‌تر بشناسم.",
+      ],
+    },
+  },
+  {
+    id: "initiative",
+    type: "research",
+    en: {
+      name: "U.S. initiative",
+      subtitle: "Credit & collections research",
+      summary:
+        "An independent project exploring how ideas from Darj and Sepam could support U.S. banking workflows.",
+      tags: ["Research", "In development"],
+      parts: [
+        "Credit assessment and collections address different stages of a lending relationship. My question is how insights from one stage might inform work at the other.",
+        "I am adapting lessons from Darj and Sepam into a concept for U.S. credit assessment and bank collections. The work begins with local workflows, data needs and opportunities for human review.",
+        "The initiative is in development. My U.S. National Interest Waiver (NIW) petition is pending. A U.S. deployment and measured results have yet to be established.",
+      ],
+    },
+    fa: {
+      name: "طرح آمریکا",
+      subtitle: "پژوهش اعتبارسنجی و وصول",
+      summary:
+        "طرحی مستقل برای بررسی کاربرد تجربهٔ درج و سپام در فرایندهای اعتبارسنجی و وصول مطالبات بانک‌های آمریکا.",
+      tags: ["پژوهش", "در حال توسعه"],
+      parts: [
+        "اعتبارسنجی و وصول مطالبات به دو مرحله از رابطهٔ بانک و وام‌گیرنده می‌پردازند. پرسش من این است که شناخت هر مرحله چگونه می‌تواند به کار مرحلهٔ دیگر کمک کند.",
+        "در این طرح، تجربهٔ درج و سپام را برای اعتبارسنجی و وصول مطالبات در آمریکا بازطراحی می‌کنم. نقطهٔ شروع، شناخت فرایندهای محلی، داده‌های مورد نیاز و امکان بازبینی انسانی است.",
+        "این طرح در حال توسعه است و پروندهٔ NIW من برای آمریکا در دست بررسی است. استقرار در آمریکا و نتایج عملکردی هنوز محقق نشده‌اند.",
+      ],
+    },
+  },
+];
+export const pathFor = (lang, route = "") =>
+  (lang === "fa" ? "/fa/" : "/") + (route ? route + "/" : "");
