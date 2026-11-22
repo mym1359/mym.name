@@ -2,8 +2,7 @@
 
 A bilingual portfolio and consultation workspace for Mohammad Yadollah Moghaddam. The site introduces Darj and Sepam, two systems designed for Bank Maskan, and an independent U.S. research initiative in development. English is the default. Every public page has a Persian counterpart under `/fa/`.
 
-**Suggested GitHub description**  
-English–Persian portfolio and consultation workspace for MYM. Banking systems, applied AI, Supabase authentication and a private client inbox.
+[Visit the English site](https://mym-studio.vercel.app/) · [مشاهدهٔ سایت فارسی](https://mym-studio.vercel.app/fa/)
 
 ## Run locally
 
