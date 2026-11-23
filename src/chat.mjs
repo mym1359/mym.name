@@ -21,6 +21,7 @@ const ask = fa
 const history = [];
 const send = dialog.querySelector(".chat-form button");
 let pending = false;
+let guideTopic = null;
 function bubble(text, from) {
   const el = document.createElement("p");
   el.className = "chat-bubble " + from;
@@ -57,30 +58,47 @@ async function submit(question) {
       typeof result.text !== "string"
     )
       throw Error("invalid");
-    history.push(
-      { role: "user", content: q },
-      { role: "assistant", content: result.text.slice(0, 1000) },
-    );
-    history.splice(0, Math.max(0, history.length - 4));
+    guideTopic = null;
   } catch (error) {
     const limited = error.message === "429";
-    result = {
-      kind: "refer",
-      text: fa
-        ? (limited
-            ? "ظرفیت فعلی گفت‌وگو تکمیل است."
-            : "دستیار اکنون در دسترس نیست.") +
-          " می‌توانید سؤال را برای مشاور بفرستید."
-        : (limited
-            ? "The current chat limit has been reached."
-            : "The assistant is temporarily unavailable.") +
-          " You can send your question to the consultant.",
-    };
+    const notice = fa
+      ? limited
+        ? "سقف استفاده از مدل پر شده است."
+        : "مدل زبانی فعلاً در دسترس نیست."
+      : limited
+        ? "The model usage limit has been reached."
+        : "The language model is temporarily unavailable.";
+    try {
+      const { answerQuestion } = await import("./chat-guide.mjs");
+      const guide = answerQuestion(q, lang, guideTopic);
+      guideTopic = guide.topic;
+      result = {
+        kind: guide.kind,
+        text:
+          notice +
+          (fa ? " پاسخ راهنمای سایت: " : " From the site guide: ") +
+          guide.text,
+      };
+    } catch {
+      result = {
+        kind: "refer",
+        text:
+          notice +
+          (fa
+            ? " می‌توانید سؤال را برای مشاور بفرستید."
+            : " You can send this question to the consultant."),
+      };
+    }
   } finally {
     pending = false;
     send.disabled = false;
     send.textContent = fa ? "ارسال سؤال" : "Ask question";
   }
+  history.push(
+    { role: "user", content: q },
+    { role: "assistant", content: result.text.slice(0, 1000) },
+  );
+  history.splice(0, Math.max(0, history.length - 4));
   bubble(result.text, "assistant");
   if (["refer", "answer", "clarify"].includes(result.kind)) {
     const button = document.createElement("button");
