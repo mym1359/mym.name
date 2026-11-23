@@ -175,6 +175,21 @@ test("Workspace migration, isolation and consultation lifecycle on PostgreSQL", 
         assert.equal(m.pages[0].views, 2);
       },
     );
+    await t.test("Reserving model capacity is server-only and enforces both limits", async () => {
+      await role("postgres");
+      await db.exec(await readFile(new URL("../supabase/migrations/202611230001_consultation_quota.sql", import.meta.url), "utf8"));
+      await role("anon");
+      const reserve = async (token, visitor) => (await q("select mym_reserve_assistant($1,$2) ok",[token,visitor]))[0].ok;
+      const token = "a".repeat(64), visitor = "1".repeat(64);
+      await assert.rejects(reserve("invalid",visitor));
+      await assert.rejects(q("select * from mym_private.assistant_quota"));
+      for(let i=0;i<12;i++) assert.equal(await reserve(token,visitor),true);
+      assert.equal(await reserve(token,visitor),false);
+      await role("postgres");
+      await q("update mym_private.assistant_quota set calls=120 where bucket='all'");
+      await role("anon");
+      assert.equal(await reserve(token,"2".repeat(64)),false);
+    });
   } finally {
     await db.close();
   }

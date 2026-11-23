@@ -43,5 +43,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/consult.js": {
+      "maxDuration": 45
+    }
+  }
 }

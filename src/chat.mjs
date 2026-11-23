@@ -1,4 +1,3 @@
-import { answerQuestion } from "./chat-guide.mjs";
 import { saveDraft } from "./chat-draft.mjs";
 
 const lang = document.documentElement.lang;
@@ -19,8 +18,9 @@ const ask = fa
       "How can AI help customer support?",
       "How do we measure ROI?",
     ];
-let previousTopic = null;
-let previousQuestion = "";
+const history = [];
+const send = dialog.querySelector(".chat-form button");
+let pending = false;
 function bubble(text, from) {
   const el = document.createElement("p");
   el.className = "chat-bubble " + from;
@@ -29,13 +29,58 @@ function bubble(text, from) {
   log.append(el);
   log.scrollTop = log.scrollHeight;
 }
-function submit(question) {
-  if (!question.trim()) return;
+async function submit(question) {
+  if (pending || !question.trim()) return;
   const q = question.trim().slice(0, 1000);
-  const result = answerQuestion(q, lang, previousTopic);
+  const earlier = history
+    .filter((m) => m.role === "user")
+    .map((m) => m.content);
+  pending = true;
+  send.disabled = true;
+  field.value = "";
   suggestions.hidden = true;
   log.querySelector(".chat-refer")?.remove();
   bubble(q, "visitor");
+  send.textContent = fa ? "در حال بررسی…" : "Considering…";
+  let result;
+  try {
+    const response = await fetch("/api/consult/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ lang, question: q, history }),
+      signal: AbortSignal.timeout(35000),
+    });
+    if (!response.ok) throw Error(String(response.status));
+    result = await response.json();
+    if (
+      !["answer", "clarify", "outside", "refer"].includes(result?.kind) ||
+      typeof result.text !== "string"
+    )
+      throw Error("invalid");
+    history.push(
+      { role: "user", content: q },
+      { role: "assistant", content: result.text.slice(0, 1000) },
+    );
+    history.splice(0, Math.max(0, history.length - 4));
+  } catch (error) {
+    const limited = error.message === "429";
+    result = {
+      kind: "refer",
+      text: fa
+        ? (limited
+            ? "ظرفیت فعلی گفت‌وگو تکمیل است."
+            : "دستیار اکنون در دسترس نیست.") +
+          " می‌توانید سؤال را برای مشاور بفرستید."
+        : (limited
+            ? "The current chat limit has been reached."
+            : "The assistant is temporarily unavailable.") +
+          " You can send your question to the consultant.",
+    };
+  } finally {
+    pending = false;
+    send.disabled = false;
+    send.textContent = fa ? "ارسال سؤال" : "Ask question";
+  }
   bubble(result.text, "assistant");
   if (["refer", "answer", "clarify"].includes(result.kind)) {
     const button = document.createElement("button");
@@ -44,13 +89,7 @@ function submit(question) {
     button.textContent = fa
       ? "بررسی و ارسال به مشاور"
       : "Review and send to the consultant";
-    const body =
-      previousTopic && previousQuestion
-        ? (fa ? "سؤال قبلی: " : "Earlier question: ") +
-          previousQuestion +
-          "\n\n" +
-          q
-        : q;
+    const body = [...earlier, q].join("\n\n");
     button.onclick = () => {
       try {
         saveDraft(body);
@@ -66,15 +105,6 @@ function submit(question) {
     };
     log.append(button);
   }
-  previousTopic =
-    result.topic ||
-    (result.kind === "clarify"
-      ? "clarify"
-      : result.kind === "refer"
-        ? previousTopic
-        : null);
-  previousQuestion = q;
-  field.value = "";
   log.scrollTop = log.scrollHeight;
   field.focus();
 }
