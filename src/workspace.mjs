@@ -1,3 +1,4 @@
+import { readDraft, clearDraft } from "./chat-draft.mjs";
 import { ui } from "./workspace-copy.mjs";
 import { previewData } from "./preview-data.mjs";
 const root = document.querySelector("#workspace"),
@@ -100,8 +101,10 @@ function summary(m) {
   const max = Math.max(1, ...m.days.map((d) => d.views));
   return `<div class="stat-grid">${cards.map(([s, n]) => `<div class="stat-card"><span>${s}</span><strong>${num(n)}</strong></div>`).join("")}</div><details class="panel data-summary" open><summary><b>${t.traffic}</b> · ${t.daysRange}</summary><div class="stats-pair"><div><h3>${t.daily}</h3><div class="mini-chart" aria-hidden="true">${m.days.map((d) => `<svg viewBox="0 0 10 100" preserveAspectRatio="none"><rect x="0" y="${100 - (100 * d.views) / max}" width="9" height="${(100 * d.views) / max}"/></svg>`).join("")}</div><details class="counts"><summary>${t.trendDetail}</summary><table><thead><tr><th>${t.date}</th><th>${t.viewLabel}</th></tr></thead><tbody>${m.days.map((d) => `<tr><td>${date(d.day + "T12:00:00Z")}</td><td>${num(d.views)}</td></tr>`).join("")}</tbody></table></details><p class="mini">${t.dataHint}</p></div><div><h3>${t.popular}</h3>${m.pages.length ? m.pages.map((p) => `<div class="bar-row"><span>${escape(pageNames[p.page] || p.page)}</span><meter min="0" max="${Math.max(1, m.pages[0].views)}" value="${Number(p.views)}"></meter><b>${num(p.views)}</b></div>`).join("") : `<p>${t.emptyStats}</p>`}<p class="mini">${t.lang} · ${t.english} ${num(m.en)} / ${t.persian} ${num(m.fa)}</p><p class="mini">${t.statusMix} · ${t.open} ${num(m.open)} / ${t.active} ${num(m.active)} / ${t.closed} ${num(m.closed)}</p></div></div></details>`;
 }
+let chatDraft = null;
 function compose() {
-  return `<section class="panel" id="compose"><h2>${t.compose}</h2><form class="stack" id="new-form"><label>${t.topic}<select name="topic" required><option value="">${t.chooseTopic}</option>${options(t.topics, "")}</select></label><label>${t.subject}<input name="subject" required minlength="3" maxlength="160" dir="auto"></label><label>${t.message}<textarea name="body" required maxlength="5000" dir="auto"></textarea></label><p class="mini">${t.safe}</p><div class="form-actions"><button class="btn primary">${t.send}</button><button type="button" class="btn outline" data-act="cancel">${t.cancel}</button></div></form></section>`;
+  const subject = chatDraft ? (lang === "fa" ? "سؤال از دستیار مشاوره" : "Consultation assistant referral") : "";
+  return `<section class="panel" id="compose"><h2>${t.compose}</h2><form class="stack" id="new-form"><label>${t.topic}<select name="topic" required><option value="">${t.chooseTopic}</option>${options(t.topics, chatDraft ? "workflow" : "")}</select></label><label>${t.subject}<input name="subject" value="${escape(subject)}" required minlength="3" maxlength="160" dir="auto"></label><label>${t.message}<textarea name="body" required maxlength="5000" dir="auto">${escape(chatDraft?.body || "")}</textarea></label><p class="mini">${t.safe}</p><div class="form-actions"><button class="btn primary">${t.send}</button><button type="button" class="btn outline" data-act="cancel">${t.cancel}</button></div></form></section>`;
 }
 function inbox() {
   return `<section class="panel"><h2>${t.requests}</h2><form id="search-form" class="toolbar"><label>${t.filter}<select name="status">${options({ "": t.all, ...statusLabels }, filter)}</select></label><label>${t.search}<input type="search" name="search" maxlength="160" placeholder="${t.searchHint}" value="${escape(search)}"></label><button class="status-btn">${t.apply}</button></form><div>${rows.map((r) => `<button class="request-row" data-id="${escape(r.id)}" aria-current="${selected?.id === r.id}"><strong>${escape(r.subject)}</strong><span class="row-head"><span class="badge ${r.status}">${t[r.status]}</span><time>${date(r.updated_at)}</time></span>${adminPage ? `<span class="mini">${escape(r.client_email)}</span>` : ""}</button>`).join("") || `<p class="empty">${!filter && !search && !adminPage ? t.empty : t.none}</p>`}</div><div class="pager"><button data-act="prev" ${page ? "" : "disabled"}>${t.previous}</button><span>${t.page} ${num(page + 1)}</span><button data-act="next" ${hasNext ? "" : "disabled"}>${t.next}</button></div></section>`;
@@ -148,7 +151,9 @@ async function boot() {
     root.innerHTML = `<div class="panel"><p>${t.denied}</p><div class="form-actions"><a class="btn primary" href="${base}portal/">${t.clientLink}</a><button class="link-button" data-act="exit">${t.logout}</button></div><p id="app-note" role="status"></p></div>`;
     return;
   }
-  composer =
+  chatDraft = !adminPage && !demo ? readDraft() : null;
+  if (chatDraft) formKey = chatDraft.id;
+  composer = Boolean(chatDraft) ||
     !adminPage && new URLSearchParams(location.search).get("new") === "1";
   try {
     await draw();
@@ -192,10 +197,13 @@ root.addEventListener("click", async (e) => {
         const { error } = await client.auth.signOut({ scope: "local" });
         if (error) throw error;
       }
+      clearDraft();
       location.replace(location.pathname);
       return;
     }
     if (op === "new" || op === "cancel") {
+      if (chatDraft) clearDraft(chatDraft.id);
+      chatDraft = null;
       composer = op === "new";
       formKey = null;
       $("#composer").innerHTML = composer ? compose() : "";
@@ -239,6 +247,8 @@ root.addEventListener("submit", async (e) => {
         p_subject: v.subject.trim(),
         p_body: v.body.trim(),
       });
+      if (chatDraft) clearDraft(chatDraft.id);
+      chatDraft = null;
       formKey = null;
       composer = false;
       filter = "";
@@ -300,6 +310,11 @@ async function connect() {
       notify(t.loadFailure);
     }
     return;
+  }
+  if (!adminPage && readDraft()) {
+    notify(lang === "fa"
+      ? "سؤال شما برای بازبینی آماده است. وارد شوید، سپس آن را از پنل برای مشاور ارسال کنید."
+      : "Your question is ready for review. Sign in, then submit it to the consultant from your workspace.");
   }
   const returnUrl =
     location.origin +

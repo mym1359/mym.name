@@ -34,3 +34,8 @@ if (
     keepalive: true,
   }).catch(() => {});
 }
+
+document.querySelector("#open-chat")?.addEventListener("click", async () => {
+  const { openChat } = await import("./chat.mjs");
+  openChat();
+});
