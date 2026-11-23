@@ -89,7 +89,7 @@ export const copy = {
     privacyText: [
       "Public pages can be read without an account. On the configured production site, the dashboard counts page views by public page, language and day. The application does not store a visitor’s IP address or create a cross-site advertising profile.",
       "If you use the portal, Supabase handles your email or Google sign-in. Your account, consultation requests and messages are used to provide the service. You and the designated administrator can read your conversations. Hosting and authentication providers may keep their own operational logs.",
-      "The AI assistant sends your question and up to two previous exchanges through Vercel AI Gateway to the model provider. It uses the site’s consulting notes and general model knowledge. Please omit personal and confidential details. The site limits usage with temporary counters. Choosing to contact the consultant saves a draft in this browser that can be resumed for one hour during sign-in. Review and submit it in the portal to share it with the consultant.",
+      "The AI assistant sends your question and up to two previous exchanges directly from the site’s server to Groq for processing by GPT-OSS 120B. It uses the site’s consulting notes and general model knowledge. Please omit personal and confidential details. The site limits usage with temporary counters. Choosing to contact the consultant saves a draft in this browser that can be resumed for one hour during sign-in. Review and submit it in the portal to share it with the consultant.",
       "Keep bank records, account numbers and customer information out of consultation messages. For a question about your data or a deletion request, send a message to the administrator through your workspace.",
     ],
     signTitle: "Your client workspace",
@@ -197,7 +197,7 @@ export const copy = {
     privacyText: [
       "صفحات عمومی بدون حساب کاربری قابل مشاهده‌اند. در نسخهٔ عملیاتی سایت، تعداد بازدیدها به تفکیک صفحهٔ عمومی، زبان و روز شمرده می‌شود. برنامه نشانی اینترنتی بازدیدکننده را ذخیره نمی‌کند و برای تبلیغات بین سایت‌ها پروفایل نمی‌سازد.",
       "برای ورود با گوگل یا ایمیل، احراز هویت را Supabase انجام می‌دهد. از حساب کاربری، درخواست‌ها و پیام‌ها برای ارائهٔ مشاوره استفاده می‌شود. شما و مدیر تعیین‌شده می‌توانید گفت‌وگوهایتان را بخوانید. ارائه‌دهندگان میزبانی و ورود ممکن است گزارش‌های عملیاتی خود را نگه دارند.",
-      "دستیار برای پاسخ، سؤال و حداکثر دو نوبت قبلی گفت‌وگو را از طریق درگاه هوش مصنوعی Vercel به ارائه‌دهندهٔ مدل می‌فرستد. پاسخ بر پایهٔ راهنمای مشاورهٔ سایت و دانش عمومی مدل است. اطلاعات شخصی یا محرمانه وارد نکنید. سایت برای محدودکردن تعداد درخواست‌ها از شمارنده‌های موقت استفاده می‌کند. با انتخاب ارجاع به مشاور، پیش‌نویس برای ادامهٔ ورود تا یک ساعت در این مرورگر قابل بازیابی است. پس از بازبینی و ارسال در پنل، مشاور آن را می‌بیند.",
+      "دستیار برای پاسخ، سؤال و حداکثر دو نوبت قبلی گفت‌وگو را مستقیماً از سرور سایت به Groq می‌فرستد تا مدل GPT-OSS 120B آن را پردازش کند. پاسخ بر پایهٔ راهنمای مشاورهٔ سایت و دانش عمومی مدل است. اطلاعات شخصی یا محرمانه وارد نکنید. سایت برای محدودکردن تعداد درخواست‌ها از شمارنده‌های موقت استفاده می‌کند. با انتخاب ارجاع به مشاور، پیش‌نویس برای ادامهٔ ورود تا یک ساعت در این مرورگر قابل بازیابی است. پس از بازبینی و ارسال در پنل، مشاور آن را می‌بیند.",
       "لطفاً پروندهٔ بانکی، شماره حساب یا اطلاعات مشتریان را در پیام‌ها وارد نکنید. برای پرسش دربارهٔ اطلاعات خود یا درخواست حذف آن، از پنل کاربری به مدیر پیام دهید.",
     ],
     signTitle: "پنل مشاوره شما",

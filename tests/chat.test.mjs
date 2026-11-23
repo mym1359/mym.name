@@ -96,7 +96,7 @@ test("model receives context and returns a brief tailored reply via the handler"
     SUPABASE_URL: "https://db.example",
     SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test",
     MYM_ANALYTICS_TOKEN: "a".repeat(64),
-    AI_GATEWAY_API_KEY: "test-only",
+    GROQ_API_KEY: "test-only",
   };
   const saved = Object.fromEntries(
     Object.keys(config).map((k) => [k, process.env[k]]),
@@ -115,10 +115,17 @@ test("model receives context and returns a brief tailored reply via the handler"
   let modelCalls = 0;
   t.mock.method(globalThis, "fetch", async (url, options) => {
     if (String(url).includes("/rpc/")) return Response.json(true);
+    assert.equal(
+      String(url),
+      "https://api.groq.com/openai/v1/chat/completions",
+    );
+    assert.equal(options.headers.Authorization, "Bearer test-only");
     modelCalls++;
     const payload = JSON.parse(options.body);
     assert.deepEqual(payload.messages.slice(1, -1), history);
     assert.equal(payload.reasoning_effort, "low");
+    assert.equal(payload.model, "openai/gpt-oss-120b");
+    assert.equal(payload.response_format.json_schema.strict, true);
     assert.equal(payload.messages.at(-1).content, "Typing them into orders.");
     const content = JSON.stringify({
       kind: "answer",
@@ -148,4 +155,19 @@ test("model receives context and returns a brief tailored reply via the handler"
   assert.equal(res.code, 200);
   assert.equal(modelCalls, 1);
   assert.equal(res.body.kind, "answer");
+  delete process.env.GROQ_API_KEY;
+  await handler(
+    {
+      method: "POST",
+      headers: { origin: config.SITE_URL, "content-type": "application/json" },
+      body: {
+        lang: "en",
+        question: "How can I evaluate a pilot?",
+        history: [],
+      },
+    },
+    res,
+  );
+  assert.equal(res.code, 503);
+  assert.equal(modelCalls, 1);
 });

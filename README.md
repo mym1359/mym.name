@@ -40,6 +40,10 @@ psql -v owner_email="$MYM_ADMIN_EMAIL" -f scripts/designate-admin.sql
 
 The designated owner signs in at `/admin/` using the verified address. No administrator email, default password or production secret is embedded in the repository. A client can never appoint an administrator. For a custom Supabase API hostname, add the exact HTTPS origin to the CSP `connect-src` in `vercel.json` before deploying.
 
+## Consultation assistant
+
+The server calls Groq directly using `openai/gpt-oss-120b`. Create a key in a Groq Free organization and save it as the sensitive **Production** environment variable `GROQ_API_KEY` in Vercel. Redeploy after changing the key. The site uses a labeled local guide and the existing private referral form when the key is missing or the free quota is exhausted.
+
 ## Client and admin operations
 
 - Clients start requests, read their own history and send follow-up messages. Closing a request stops further replies until the administrator reopens it.
