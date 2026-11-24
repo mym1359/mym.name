@@ -129,9 +129,7 @@ function activate() {
       z = (random() - 0.5) * 0.24;
     return [Math.cos(a) * r, Math.sin(a) * r * 0.8, z, random()];
   });
-  const copy = scene.parentElement.querySelector(".hero-copy");
   const updateLights = createLetterLights();
-  let copyTop = 0;
   // The three inclined orbits extend beyond the frame and pass behind the copy.
   const tracks = [0.16, -0.32, 0.45].map((tilt, i) =>
     Array.from({length: 181}, (_, step) => {
@@ -183,10 +181,9 @@ function activate() {
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    copyTop = copy.getBoundingClientRect().top - rect.top;
     centerX = width * 0.5;
-    centerY = width <= 740 ? (80 + copyTop) * 0.5 : height * 0.45;
-    scale = Math.min(width, height) * 0.53;
+    centerY = height * 0.51;
+    scale = Math.min(width * 0.46, height * 0.44);
     sky.width = canvas.width;
     sky.height = canvas.height;
     const bg = sky.getContext("2d");
@@ -198,7 +195,7 @@ function activate() {
     const radius = scale * 1.30;
     for (const [x, y, size, opacity, warm] of galaxy) {
       bg.fillStyle = `rgba(${warm ? "254,189,144" : "155,214,231"},${opacity})`;
-      bg.fillRect(centerX + x * width * 0.73, centerY + y * radius, size, size);
+      bg.fillRect(centerX + x * radius, centerY + y * radius, size, size);
     }
     queue();
   }
@@ -214,8 +211,8 @@ function activate() {
         c = y * cp - b * sp,
         d = y * sp + b * cp;
       const k = (3.8 / (3.8 - d)) * scale * zoom;
-      let px = centerX + a * k * (width * 0.53 / scale),
-        py = centerY + c * k * (height * 0.50 / scale);
+      let px = centerX + a * k,
+        py = centerY + c * k;
       if (hover && bend && !drag && !reduced.matches) {
         const dx = px - hover.x,
           dy = py - hover.y,
@@ -318,14 +315,14 @@ function activate() {
       const [x, y] = project(anchors[i], false);
       const left = clamp(x - 11, 2, Math.max(2, width - node.offsetWidth - 2)),
         h = node.offsetHeight;
-      let top = clamp(y - h * 0.5, 85, Math.max(90, copyTop - h - 6));
+      let top = clamp(y - h * 0.5, 6, height - h - 5);
       for (const prev of occupied)
         if (
           Math.abs(top - prev.top) < h + 3 &&
           left < prev.right &&
           left + node.offsetWidth > prev.left
         )
-          top = clamp(prev.top + h + 4, 5, Math.max(90, copyTop - h - 4));
+          top = clamp(prev.top + h + 4, 5, height - h - 4);
       occupied.push({ left, top, right: left + node.offsetWidth });
       node.style.left = left + "px";
       node.style.top = top + "px";
@@ -486,9 +483,7 @@ function activate() {
     last = 0;
     queue();
   });
-  const sizes = new ResizeObserver(resize);
-  sizes.observe(scene);
-  sizes.observe(copy);
+  new ResizeObserver(resize).observe(scene);
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
     if (!visible && frame) {
