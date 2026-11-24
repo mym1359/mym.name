@@ -21,30 +21,23 @@ body[data-route=""] .site-head {
   padding: max(250px, 42svh) var(--gutter) max(16px, env(safe-area-inset-bottom));
 }
 .observatory .hero-copy {
-  display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
-  gap: 8px 6vw;
-  align-items: end;
+  max-width: 52rem;
   pointer-events: none;
   text-shadow: 0 2px 16px #030b14, 0 1px 4px #030b14;
 }
-.observatory .hero-copy a { pointer-events: auto; }
-.observatory .eyebrow { grid-column: 1; margin: 0; }
+.observatory .hero-copy a { pointer-events: auto; text-shadow: none; }
+.observatory .eyebrow { margin: 0 0 8px; }
 .observatory h1 {
-  grid-column: 1;
   font-size: clamp(2.4rem, 4.5vw, 5.4rem);
   line-height: 1.12;
 }
 .observatory h1 em { color: #ffbc86; background: none; white-space: nowrap; }
 .observatory .hero-intro {
-  grid-area: 2 / 2 / 4 / 3;
-  align-self: center;
   max-width: 440px;
-  margin: 0;
+  margin: 12px 0 0;
   color: #d1dce4;
   font-size: clamp(.9rem, 1.15vw, 1.1rem);
 }
-.observatory .hero-buttons { grid-column: 1; margin: 7px 0 0; }
 .orbit-stage {
   position: absolute;
   inset: 0;
@@ -275,7 +268,7 @@ html[lang="fa"] .orbit-card { left: var(--gutter); right: auto; }
   .observatory .hero-copy { display: block; }
   .observatory h1 { font-size: clamp(2rem, 8vw, 3.4rem); margin-block: 5px; }
   .observatory .hero-intro { font-size: .91rem; line-height: 1.5; }
-  .observatory .hero-buttons { margin-top: 12px; }
+  .observatory .hero-buttons { margin-top: 16px; }
   .orbit-foot { margin: 10px 0 0; gap: 5px; padding: 6px 0 0; }
   .orbit-foot p { width: 100%; font-size: .69rem; }
   .orbit-controls { margin-inline-end: 112px; }
