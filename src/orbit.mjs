@@ -3,11 +3,10 @@ const scene = document.querySelector("[data-orbit]");
 const canvas = scene?.querySelector("canvas");
 const ctx = canvas?.getContext("2d");
 if (ctx) activate();
-if (scene) illuminateCopy();
 
-function illuminateCopy() {
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
-  if (reduced.matches || !window.CSS?.highlights || !window.Intl?.Segmenter) return;
+
+function createLetterLights() {
+  if (!window.CSS?.highlights || !window.Intl?.Segmenter) return () => {};
   const copy = scene.parentElement.querySelector(".hero-copy");
   const segmenter = new Intl.Segmenter(document.documentElement.lang, {granularity: "grapheme"});
   const letters = [];
@@ -25,27 +24,35 @@ function illuminateCopy() {
       }
     }
   }
-  const dim = new Highlight(...letters);
+  const dim = new Highlight();
+  const halo = new Highlight();
   const glow = new Highlight();
-  glow.priority = 1;
+  halo.priority = 1;
+  glow.priority = 2;
   CSS.highlights.set("orbit-dim", dim);
+  CSS.highlights.set("orbit-halo", halo);
   CSS.highlights.set("orbit-glow", glow);
-  const start = performance.now() + 180;
-  let lit = 0, cooled = 0;
-  function illuminate(now) {
-    const active = Math.max(0, Math.floor((now - start) / 24));
-    while (lit < Math.min(active, letters.length)) {
-      dim.delete(letters[lit]);
-      glow.add(letters[lit++]);
-    }
-    while (cooled < Math.min(lit, active - 4)) glow.delete(letters[cooled++]);
-    if (!reduced.matches && cooled < letters.length) requestAnimationFrame(illuminate);
-    else {
-      CSS.highlights.delete("orbit-dim");
-      CSS.highlights.delete("orbit-glow");
-    }
-  }
-  requestAnimationFrame(illuminate);
+  const states = new Int8Array(letters.length).fill(-1);
+  const layers = [null, dim, halo, glow];
+  return (seconds, moving) => {
+    letters.forEach((range, index) => {
+      const age = seconds - index * 0.031;
+      const period = 5.4 + (index * 0.379) % 4.1;
+      const phase = (age + (index * 2.718) % period) % period;
+      let state = 0;
+      if (moving) {
+        if (age < 0) state = 1;
+        else if (age < 0.52 || (age > 2 && phase < 0.58)) {
+          const pulse = age < 0.52 ? age : phase;
+          state = pulse > 0.13 && pulse < 0.34 ? 3 : 2;
+        }
+      }
+      if (states[index] === state) return;
+      layers[states[index]]?.delete(range);
+      layers[state]?.add(range);
+      states[index] = state;
+    });
+  };
 }
 
 function activate() {
@@ -58,7 +65,7 @@ function activate() {
   const anchors = [
     [-0.78, -0.56, 0.11],
     [0.74, -0.39, 0.2],
-    [0.29, 0.76, 0.03],
+    [0.52, 0.23, 0.03],
   ];
   let seed = 8473;
   const random = () =>
@@ -122,7 +129,19 @@ function activate() {
       z = (random() - 0.5) * 0.24;
     return [Math.cos(a) * r, Math.sin(a) * r * 0.8, z, random()];
   });
-  const orbitWindow = scene.parentElement.querySelector(".orbit-window");
+  const copy = scene.parentElement.querySelector(".hero-copy");
+  const updateLights = createLetterLights();
+  let copyTop = 0;
+  // The three inclined orbits extend beyond the frame and pass behind the copy.
+  const tracks = [0.16, -0.32, 0.45].map((tilt, i) =>
+    Array.from({length: 181}, (_, step) => {
+      const t = step * Math.PI / 90;
+      const x = Math.cos(t) * (1.48 - i * 0.12);
+      const y = Math.sin(t) * (0.34 + i * 0.09);
+      return [x * Math.cos(tilt) - y * Math.sin(tilt),
+        x * Math.sin(tilt) + y * Math.cos(tilt), Math.sin(t) * 0.36];
+    })
+  );
   const sky = document.createElement("canvas");
   // A static spiral of stardust is drawn once per layout, behind the moving orbit.
   const galaxy = Array.from({length: 5600}, () => {
@@ -164,10 +183,10 @@ function activate() {
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const windowRect = orbitWindow.getBoundingClientRect();
-    centerX = windowRect.left - rect.left + windowRect.width / 2;
-    centerY = windowRect.top - rect.top + windowRect.height / 2;
-    scale = Math.min(windowRect.width * 0.46, windowRect.height * 0.46);
+    copyTop = copy.getBoundingClientRect().top - rect.top;
+    centerX = width * 0.5;
+    centerY = width <= 740 ? (80 + copyTop) * 0.5 : height * 0.45;
+    scale = Math.min(width, height) * 0.53;
     sky.width = canvas.width;
     sky.height = canvas.height;
     const bg = sky.getContext("2d");
@@ -179,7 +198,7 @@ function activate() {
     const radius = scale * 1.30;
     for (const [x, y, size, opacity, warm] of galaxy) {
       bg.fillStyle = `rgba(${warm ? "254,189,144" : "155,214,231"},${opacity})`;
-      bg.fillRect(centerX + x * radius, centerY + y * radius, size, size);
+      bg.fillRect(centerX + x * width * 0.73, centerY + y * radius, size, size);
     }
     queue();
   }
@@ -195,8 +214,8 @@ function activate() {
         c = y * cp - b * sp,
         d = y * sp + b * cp;
       const k = (3.8 / (3.8 - d)) * scale * zoom;
-      let px = centerX + a * k,
-        py = centerY + c * k;
+      let px = centerX + a * k * (width * 0.53 / scale),
+        py = centerY + c * k * (height * 0.50 / scale);
       if (hover && bend && !drag && !reduced.matches) {
         const dx = px - hover.x,
           dy = py - hover.y,
@@ -230,6 +249,23 @@ function activate() {
       [cx, cy] = project([0, 0, 0], false);
     aura(cx, cy, scale * 0.91, "rgba(37,120,136,.105)", "rgba(7,17,28,0)");
     ctx.globalCompositeOperation = "lighter";
+    tracks.forEach((track, i) => {
+      ctx.beginPath();
+      track.forEach((point, j) => {
+        const [x, y] = project(point, false);
+        if (j === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.strokeStyle = "rgba(" + palette[i] + ",.32)";
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
+      const pos = (time * 0.011 + i * 0.31) % 1 * 180;
+      const step = Math.floor(pos);
+      const point = track[step].map((v, n) => v + (track[step + 1][n] - v) * (pos - step));
+      const [x, y] = project(point, false);
+      aura(x, y, 10, "rgba(" + palette[i] + ",.65)", "transparent");
+      dot(x, y, 1.8, "#fff6df");
+    });
     for (const bundle of bundles) {
       const color = palette[bundle.group];
       const z = project(bundle.strands[0][29], false)[2];
@@ -282,14 +318,14 @@ function activate() {
       const [x, y] = project(anchors[i], false);
       const left = clamp(x - 11, 2, Math.max(2, width - node.offsetWidth - 2)),
         h = node.offsetHeight;
-      let top = clamp(y - h * 0.5, 6, height - h - 5);
+      let top = clamp(y - h * 0.5, 85, Math.max(90, copyTop - h - 6));
       for (const prev of occupied)
         if (
           Math.abs(top - prev.top) < h + 3 &&
           left < prev.right &&
           left + node.offsetWidth > prev.left
         )
-          top = clamp(prev.top + h + 4, 5, height - h - 4);
+          top = clamp(prev.top + h + 4, 5, Math.max(90, copyTop - h - 4));
       occupied.push({ left, top, right: left + node.offsetWidth });
       node.style.left = left + "px";
       node.style.top = top + "px";
@@ -308,6 +344,7 @@ function activate() {
       yaw += dt * 0.029;
       time += dt;
     }
+    updateLights(time, moving && !reduced.matches);
     draw();
     if (moving && !drag && selected < 0 && !scene.matches(":focus-within"))
       queue();
@@ -451,7 +488,7 @@ function activate() {
   });
   const sizes = new ResizeObserver(resize);
   sizes.observe(scene);
-  sizes.observe(orbitWindow);
+  sizes.observe(copy);
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
     if (!visible && frame) {
