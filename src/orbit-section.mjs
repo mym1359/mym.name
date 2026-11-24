@@ -31,7 +31,8 @@ export function orbitSection({ lang, c, eye, btn, url }) {
           scene: "Use arrow keys to orbit and plus or minus to zoom.",
         };
   return `<section class="hero observatory" aria-label="${c.identity}">
-   <div class="observatory-inner wrap">
+   <div class="observatory-inner">
+    <div class="orbit-window" aria-hidden="true"></div>
     <div class="hero-copy">${eye(c.identity)}<h1>${c.headline[0]}<br><em>${c.headline[1]}</em></h1>
       <p class="hero-intro">${c.intro}</p>
       <div class="hero-buttons">${btn("primary", url("portal") + "?new=1", c.consult, "chat")}${btn("ghost", "#projects", c.explore, "grid")}</div>

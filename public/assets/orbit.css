@@ -1,65 +1,49 @@
+body[data-route=""] .site-head {
+  position: absolute;
+  inset: 0 0 auto;
+  background: linear-gradient(#06101df2, #06101d8c);
+}
 .observatory {
-  background: #06121d;
+  background: #050d18;
   isolation: isolate;
 }
 .observatory::before {
-  background:
-    radial-gradient(ellipse at 72% 51%, #104e6029, transparent 53%),
-    radial-gradient(ellipse at 14% 82%, #18486324, transparent 56%);
-}
-.observatory::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  background-image:
-    radial-gradient(#a5d1df55 0.65px, transparent 0.9px),
-    radial-gradient(#7da9c247 0.6px, transparent 1px);
-  background-size:
-    109px 79px,
-    173px 137px;
-  background-position:
-    34px 45px,
-    87px 12px;
+  background: radial-gradient(ellipse at 65% 55%, #16495348, transparent 62%),
+    radial-gradient(ellipse at 12% 86%, #22344948, transparent 65%);
 }
 .observatory-inner {
+  --gutter: clamp(24px, 5.3vw, 112px);
   position: relative;
   display: grid;
-  grid-template-columns: 0.79fr 1.21fr;
-  grid-template-rows: minmax(380px, 1fr) auto;
+  grid-template-columns: minmax(0, 0.83fr) minmax(0, 1.17fr);
+  grid-template-rows: 1fr auto;
   align-items: center;
-  min-height: clamp(560px, 77svh, 845px);
-  padding-block: 20px 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 90px var(--gutter) max(20px, env(safe-area-inset-bottom));
 }
 .observatory .hero-copy {
-  padding-block: 48px 30px;
+  grid-area: 1 / 1;
+  padding: 30px 0;
   pointer-events: none;
 }
-.observatory .hero-copy a {
-  pointer-events: auto;
-}
-.observatory .hero-intro {
-  max-width: 440px;
-  color: #b9cad4;
-}
-.observatory h1 {
-  font-size: clamp(3.65rem, 5.4vw, 5.7rem);
-  line-height: 1.04;
-}
-.observatory h1 em {
-  color: #ffa567;
-  background: none;
+.observatory .hero-copy a { pointer-events: auto; }
+.observatory .hero-intro { max-width: 440px; color: #c5d8de; }
+.observatory h1 { font-size: clamp(3.5rem, 5.7vw, 6.75rem); line-height: 1.03; }
+.observatory h1 em { color: #ffb27c; background: none; }
+.orbit-window {
+  grid-area: 1 / 2;
+  align-self: stretch;
+  min-height: 355px;
+  pointer-events: none;
 }
 .orbit-stage {
-  isolation: isolate;
-  position: relative;
-  align-self: stretch;
-  min-width: 0;
-  min-height: 400px;
-  margin-inline: -3% -5%;
+  position: absolute;
+  inset: 0;
   touch-action: pan-y;
 }
+.orbit-stage:has(.orbit-card:not([hidden])) { z-index: 2; pointer-events: none; }
+.orbit-stage:has(.orbit-card:not([hidden])) :is(.orbit-card,.orbit-node,.orbit-canvas) { pointer-events: auto; }
 .orbit-fallback,
 .orbit-canvas {
   width: 100%;
@@ -262,62 +246,50 @@ html[lang="fa"] .orbit-card {
 html[lang="fa"] .orbit-eyeline {
   inset: 5% 7% auto auto;
 }
-@media (max-width: 900px) {
-  .observatory-inner {
-    grid-template-columns: 0.9fr 1.1fr;
-    min-height: 570px;
-  }
-  .observatory .hero-intro {
-    font-size: 1rem;
-  }
-  .orbit-node {
-    font-size: 0.76rem;
-  }
-  .orbit-stage {
-    margin-inline: -5% -5%;
-  }
+/* Keep the interactive orbit above the copy on phones. Its star field covers both. */
+.orbit-foot {
+  grid-row: 2;
+  margin-inline-end: clamp(125px, 14vw, 195px);
 }
+.orbit-eyeline, html[lang="fa"] .orbit-eyeline {
+  inset: auto;
+  bottom: calc(100% - 115px);
+  left: 55%;
+}
+html[lang="fa"] .orbit-eyeline { left: auto; right: 55%; }
+.orbit-card, html[lang="fa"] .orbit-card {
+  inset: auto var(--gutter) 100px auto;
+}
+html[lang="fa"] .orbit-card { left: var(--gutter); right: auto; }
+.orbit-fallback { object-fit: contain; width: 58%; left: auto; right: 0; }
+html[lang="fa"] .orbit-fallback { left: 0; right: auto; }
+.orbit-canvas { touch-action: pan-y; }
+::highlight(orbit-dim) { color: #7891a6; text-shadow: 0 0 4px #7e9fba88; }
+::highlight(orbit-glow) { color: #fff5d8; text-shadow: 0 0 7px #fff2bf, 0 0 16px #ffbd80; }
 @media (max-width: 740px) {
   .observatory-inner {
+    --gutter: clamp(16px, 5vw, 36px);
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    min-height: 0;
+    grid-template-rows: minmax(250px, 1fr) auto auto;
+    padding-top: 78px;
+    padding-bottom: 16px;
   }
-  .observatory .hero-copy {
-    padding: 20px 0 4px;
+  .orbit-window { grid-area: 1 / 1; min-height: clamp(250px, 35svh, 420px); }
+  .observatory .hero-copy { grid-area: 2 / 1; padding: 0 0 18px; }
+  .observatory .eyebrow { margin-bottom: 7px; }
+  .observatory h1 { font-size: clamp(2.8rem, 9.5vw, 4rem); }
+  .observatory .hero-intro { font-size: 0.96rem; line-height: 1.55; margin-top: 10px; }
+  .observatory .hero-buttons { margin-top: 15px; }
+  .orbit-foot { grid-row: 3; margin: 0; gap: 5px; padding: 9px 0 4px; }
+  .orbit-foot p { width: 100%; font-size: 0.69rem; }
+  .orbit-controls { margin-inline-end: 112px; }
+  .orbit-controls button { font-size: 0.72rem; padding-inline: 8px; }
+  .orbit-eyeline, html[lang="fa"] .orbit-eyeline {
+    inset: 84px auto auto var(--gutter);
+    font-size: 0.65rem;
   }
-  .observatory h1 {
-    font-size: clamp(3.4rem, 10.5vw, 4.8rem);
-  }
-  .observatory .hero-intro {
-    max-width: 580px;
-    margin-top: 12px;
-  }
-  .observatory .hero-buttons {
-    margin-top: 16px;
-  }
-  .orbit-stage {
-    margin: 0 -4%;
-    min-height: 0;
-    height: clamp(300px, 76vw, 410px);
-  }
-  .orbit-foot {
-    padding: 11px 0 14px;
-    gap: 6px;
-  }
-  .orbit-foot p {
-    font-size: 0.75rem;
-  }
-  .orbit-eyeline {
-    top: 3%;
-  }
-  .orbit-controls button {
-    font-size: 0.75rem;
-  }
-  .orbit-card {
-    bottom: 3px;
-  }
-  .orbit-footer {
-    gap: 6px;
-  }
+  html[lang="fa"] .orbit-eyeline { left: auto; right: var(--gutter); }
+  .orbit-card, html[lang="fa"] .orbit-card { inset: 108px var(--gutter) auto; margin: auto; }
+  .orbit-fallback { width: 100%; height: 40%; top: 78px; }
+  .orbit-node { font-size: 0.76rem; }
 }

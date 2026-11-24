@@ -3,6 +3,50 @@ const scene = document.querySelector("[data-orbit]");
 const canvas = scene?.querySelector("canvas");
 const ctx = canvas?.getContext("2d");
 if (ctx) activate();
+if (scene) illuminateCopy();
+
+function illuminateCopy() {
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduced.matches || !window.CSS?.highlights || !window.Intl?.Segmenter) return;
+  const copy = scene.parentElement.querySelector(".hero-copy");
+  const segmenter = new Intl.Segmenter(document.documentElement.lang, {granularity: "grapheme"});
+  const letters = [];
+  // Highlight text ranges in place so Persian letters keep their joined shaping.
+  for (const element of copy.querySelectorAll(".eyebrow, h1, .hero-intro")) {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      for (const {index, segment} of segmenter.segment(node.textContent)) {
+        if (!segment.trim()) continue;
+        const range = new Range();
+        range.setStart(node, index);
+        range.setEnd(node, index + segment.length);
+        letters.push(range);
+      }
+    }
+  }
+  const dim = new Highlight(...letters);
+  const glow = new Highlight();
+  glow.priority = 1;
+  CSS.highlights.set("orbit-dim", dim);
+  CSS.highlights.set("orbit-glow", glow);
+  const start = performance.now() + 180;
+  let lit = 0, cooled = 0;
+  function illuminate(now) {
+    const active = Math.max(0, Math.floor((now - start) / 24));
+    while (lit < Math.min(active, letters.length)) {
+      dim.delete(letters[lit]);
+      glow.add(letters[lit++]);
+    }
+    while (cooled < Math.min(lit, active - 4)) glow.delete(letters[cooled++]);
+    if (!reduced.matches && cooled < letters.length) requestAnimationFrame(illuminate);
+    else {
+      CSS.highlights.delete("orbit-dim");
+      CSS.highlights.delete("orbit-glow");
+    }
+  }
+  requestAnimationFrame(illuminate);
+}
 
 function activate() {
   const nodes = [...scene.querySelectorAll("[data-node]")];
@@ -78,6 +122,18 @@ function activate() {
       z = (random() - 0.5) * 0.24;
     return [Math.cos(a) * r, Math.sin(a) * r * 0.8, z, random()];
   });
+  const orbitWindow = scene.parentElement.querySelector(".orbit-window");
+  const sky = document.createElement("canvas");
+  // A static spiral of stardust is drawn once per layout, behind the moving orbit.
+  const galaxy = Array.from({length: 5600}, () => {
+    const r = 0.05 + Math.pow(random(), 0.72) * 1.13;
+    const a = (Math.floor(random() * 3) * Math.PI * 2 / 3) + r * 4.8
+      + (random() - 0.5) * (0.35 + r * 0.9);
+    const x = Math.cos(a) * r, y = Math.sin(a) * r * 0.40 + (random() - 0.5) * 0.10;
+    return [x * 0.94 + y * 0.34, -x * 0.34 + y * 0.94,
+      0.35 + random() ** 3 * 1.1, 0.08 + random() ** 2 * 0.55, Math.cos(a) > 0.25];
+  });
+  let centerX = 0, centerY = 0;
   let width = 1,
     height = 1,
     scale = 1,
@@ -108,7 +164,23 @@ function activate() {
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    scale = Math.min(width * 0.46, height * 0.44);
+    const windowRect = orbitWindow.getBoundingClientRect();
+    centerX = windowRect.left - rect.left + windowRect.width / 2;
+    centerY = windowRect.top - rect.top + windowRect.height / 2;
+    scale = Math.min(windowRect.width * 0.46, windowRect.height * 0.46);
+    sky.width = canvas.width;
+    sky.height = canvas.height;
+    const bg = sky.getContext("2d");
+    bg.setTransform(dpr, 0, 0, dpr, 0, 0);
+    for (const [x, y, r, opacity] of stars) {
+      bg.fillStyle = `rgba(198,220,237,${opacity})`;
+      bg.fillRect(x * width, y * height, r, r);
+    }
+    const radius = scale * 1.30;
+    for (const [x, y, size, opacity, warm] of galaxy) {
+      bg.fillStyle = `rgba(${warm ? "254,189,144" : "155,214,231"},${opacity})`;
+      bg.fillRect(centerX + x * radius, centerY + y * radius, size, size);
+    }
     queue();
   }
   // Rotation is shared by the field, the central nucleus and the three HTML links.
@@ -123,8 +195,8 @@ function activate() {
         c = y * cp - b * sp,
         d = y * sp + b * cp;
       const k = (3.8 / (3.8 - d)) * scale * zoom;
-      let px = width * 0.5 + a * k,
-        py = height * 0.51 + c * k;
+      let px = centerX + a * k,
+        py = centerY + c * k;
       if (hover && bend && !drag && !reduced.matches) {
         const dx = px - hover.x,
           dy = py - hover.y,
@@ -153,8 +225,7 @@ function activate() {
   }
   function draw() {
     ctx.clearRect(0, 0, width, height);
-    for (const [x, y, r, opacity] of stars)
-      dot(x * width, y * height, r * 0.65, "rgba(163,208,222," + opacity + ")");
+    ctx.drawImage(sky, 0, 0, width, height);
     const project = projection(),
       [cx, cy] = project([0, 0, 0], false);
     aura(cx, cy, scale * 0.91, "rgba(37,120,136,.105)", "rgba(7,17,28,0)");
@@ -378,7 +449,9 @@ function activate() {
     last = 0;
     queue();
   });
-  new ResizeObserver(resize).observe(scene);
+  const sizes = new ResizeObserver(resize);
+  sizes.observe(scene);
+  sizes.observe(orbitWindow);
   new IntersectionObserver(([e]) => {
     visible = e.isIntersecting;
     if (!visible && frame) {
