@@ -206,8 +206,16 @@ test("Static pages provide per-language links, indexable content and private rou
         ),
       );
       assert.equal((html.match(/<h1[ >]/g) || []).length, 1);
-      assert.match(html, /hreflang="x-default"/);
-      assert.match(html, /rel="canonical"/);
+      const isPublic = !["portal", "admin"].includes(route);
+      assert.equal(html.includes('hreflang="x-default"'), isPublic);
+      assert.equal(html.includes('rel="canonical"'), isPublic);
+      assert.match(render(lang, route, "https://example.test", false, true), /noindex,nofollow/);
+      if (route.startsWith("work/")) {
+        const json = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)[1]);
+        const trail = json["@graph"].find(node => node["@type"] === "BreadcrumbList").itemListElement;
+        assert.equal(trail.length, 3);
+        assert.equal(trail.at(-1).item, "https://example.test/" + (lang === "fa" ? "fa/" : "") + route + "/");
+      }
       assert.equal(
         html.includes("noindex,nofollow"),
         ["portal", "admin"].includes(route),

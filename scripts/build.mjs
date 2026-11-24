@@ -11,6 +11,7 @@ const deploymentHost =
 const origin =
   process.env.SITE_URL || (deploymentHost ? "https://" + deploymentHost : "");
 const base = origin ? new URL(origin).origin : "";
+const preview = Boolean(process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production");
 const url = process.env.SUPABASE_URL || "",
   key = process.env.SUPABASE_PUBLISHABLE_KEY || "";
 if (Boolean(url) !== Boolean(key))
@@ -83,15 +84,15 @@ for (const lang of ["en", "fa"])
     await mkdir(dir, { recursive: true });
     await writeFile(
       path.join(dir, "index.html"),
-      render(lang, route, base, !!key),
+      render(lang, route, base, !!key, preview),
     );
   }
 await writeFile(path.join(dist, "404.html"), render("en", "404", base, false));
 await writeFile(
   path.join(dist, "robots.txt"),
-  `User-agent: *\nDisallow: /admin/\nDisallow: /portal/\nDisallow: /fa/admin/\nDisallow: /fa/portal/\n${base ? "Sitemap: " + base + "/sitemap.xml\n" : ""}`,
+  `User-agent: *\nDisallow: /api/\n${base && !preview ? "Sitemap: " + base + "/sitemap.xml\n" : ""}`,
 );
-if (base) {
+if (base && !preview) {
   const entries = routes
     .filter((r) => !["admin", "portal"].includes(r))
     .flatMap((r) =>

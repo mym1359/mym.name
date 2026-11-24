@@ -19,6 +19,14 @@ export const copy = {
     explore: "Explore projects",
     back: "All projects",
     identity: "Independent AI consulting",
+    seo: {
+      homeTitle: "AI consulting for businesses",
+      homeDescription: "Mohammad Yadollah Moghaddam draws on statistics and 20 years in banking to help businesses identify AI opportunities, design knowledge assistants and evaluate pilots.",
+      workTitle: "Banking AI projects and research",
+      workDescription: "Explore Darj for banking collections, Sepam for banking services and credit assessment, and an independent U.S. credit and collections research initiative.",
+      servicesTitle: "Business AI consulting services",
+      servicesDescription: "Identify a business process for AI, scope an assistant that uses approved information, or evaluate a pilot with a baseline and clear success criteria.",
+    },
     headline: ["Work smarter.", "With AI."],
     intro:
       "I’m Mohammad Yadollah Moghaddam. I bring two decades of banking experience and a background in statistics to the design of practical AI systems.",
@@ -127,6 +135,14 @@ export const copy = {
     explore: "مشاهده پروژه‌ها",
     back: "همه پروژه‌ها",
     identity: "مشاوره مستقل هوش مصنوعی",
+    seo: {
+      homeTitle: "مشاوره هوش مصنوعی برای کسب‌وکارها",
+      homeDescription: "محمد یداله مقدم با تکیه بر دانش آمار و بیست سال تجربهٔ بانکی به کسب‌وکارها در شناسایی کاربردهای هوش مصنوعی، طراحی دستیار سازمانی و ارزیابی طرح‌های آزمایشی کمک می‌کند.",
+      workTitle: "پروژه‌ها و پژوهش‌های هوش مصنوعی در بانکداری",
+      workDescription: "با سامانهٔ درج برای وصول مطالبات، سپام برای خدمات بانکی و اعتبارسنجی، و طرح پژوهشی مستقل اعتبارسنجی و وصول مطالبات در آمریکا آشنا شوید.",
+      servicesTitle: "خدمات مشاوره هوش مصنوعی برای کسب‌وکارها",
+      servicesDescription: "برای یک فرایند کاری، کاربرد مناسب هوش مصنوعی را پیدا کنید، دستیار دانش سازمانی طراحی کنید یا نتیجهٔ طرح آزمایشی را با معیارهای مشخص بسنجید.",
+    },
     headline: ["باهوش", "انجامش بده"],
     intro:
       "من محمد یداله مقدم هستم. از بیست سال تجربه در بانک و آنچه در رشتهٔ آمار آموخته‌ام، برای طراحی سامانه‌های کاربردی هوش مصنوعی استفاده می‌کنم.",

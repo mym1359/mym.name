@@ -41,7 +41,7 @@ export const esc = (s) =>
       ],
   );
 const eye = (s) => `<p class="eyebrow"><i aria-hidden="true"></i>${s}</p>`;
-export function render(lang, route, base, live) {
+export function render(lang, route, base, live, preview = false) {
   const c = copy[lang],
     url = (r = "") => pathFor(lang, r),
     other = lang === "fa" ? "en" : "fa",
@@ -53,24 +53,24 @@ export function render(lang, route, base, live) {
     : route === "404"
       ? c.notFound
       : {
-          work: c.workTitle,
-          expertise: c.expertTitle,
+          work: c.seo.workTitle,
+          expertise: c.seo.servicesTitle,
           about: c.aboutEye,
           portal: c.signTitle,
           admin: c.dashboardTitle,
           privacy: c.privacyTitle,
-        }[route] || c.identity;
+        }[route] || c.seo.homeTitle;
   const desc =
     project?.[lang].summary ||
     {
-      work: c.workLead,
-      expertise: c.expertLead,
+      work: c.seo.workDescription,
+      expertise: c.seo.servicesDescription,
       about: c.aboutIntro,
       portal: c.signIntro,
       admin: c.dashIntro,
       privacy: c.privacyText[0],
     }[route] ||
-    c.intro;
+    c.seo.homeDescription;
   const wordmark = `<a href="${url()}" class="wordmark" aria-label="MYM · ${c.home}"><img src="/assets/mym-logo.jpg" width="42" height="42" alt=""><span dir="ltr">mym<span class="brand-dot">.</span></span></a>`;
   const nav = () =>
     ["work", "expertise", "about"]
@@ -129,12 +129,34 @@ export function render(lang, route, base, live) {
   const title = pageTitle + " | MYM · " + name[lang],
     canonical = base + url(route);
   const tags =
-    base && route !== "404"
+    base && !secure && route !== "404"
       ? `<link rel="canonical" href="${canonical}">${["en", "fa", "x-default"].map((l) => `<link rel="alternate" hreflang="${l}" href="${base + pathFor(l === "fa" ? "fa" : "en", route)}">`).join("")}<meta property="og:url" content="${canonical}"><meta property="og:image" content="${base}/art/${project?.id || "hero"}.webp">`
       : "";
-  const person =
-    base && ["", "about"].includes(route)
-      ? `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": "ProfilePage", inLanguage: lang, url: canonical, mainEntity: { "@type": "Person", "@id": base + "/#mym", name: name[lang], alternateName: "MYM", sameAs: ["https://github.com/mym1359"], alumniOf: { "@type": "CollegeOrUniversity", name: c.university }, knowsAbout: lang === "fa" ? ["آمار", "بانکداری", "هوش مصنوعی"] : ["Statistics", "Banking", "Applied artificial intelligence"] } })}</script>`
-      : "";
-  return `<!doctype html><html lang="${lang}" dir="${fa ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#091e2c"><title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="website"><meta property="og:locale" content="${fa ? "fa_IR" : "en_US"}"><meta name="twitter:card" content="summary_large_image">${person}${tags}${secure || route === "404" ? '<meta name="robots" content="noindex,nofollow">' : ""}<link rel="icon" href="/assets/mym-logo.jpg"><link rel="stylesheet" href="/assets/site.css">${chat ? '<link rel="stylesheet" href="/assets/chat.css">' : ""}<script type="module" src="/assets/site.js"></script>${route === "" ? '<link rel="stylesheet" href="/assets/orbit.css"><script type="module" src="/assets/orbit.js"></script>' : ""}${secure ? '<script type="module" src="/assets/workspace.js"></script>' : ""}</head><body data-route="${route}"><a href="#main" class="skip">${c.skip}</a>${header}<main id="main">${body}</main>${footer}${chatPanel}</body></html>`;
+  const graph = [];
+  const personId = base + "/#mym";
+  if (base && ["", "about"].includes(route)) {
+    graph.push({
+      "@type": "ProfilePage", inLanguage: lang, url: canonical,
+      mainEntity: {
+        "@type": "Person", "@id": personId, name: name[lang], alternateName: "MYM",
+        url: base + url("about"), sameAs: ["https://github.com/mym1359"],
+        alumniOf: { "@type": "CollegeOrUniversity", name: c.university },
+        knowsAbout: fa ? ["آمار", "بانکداری", "هوش مصنوعی"] : ["Statistics", "Banking", "Applied artificial intelligence"],
+      },
+    });
+  }
+  if (base && !route) {
+    graph.push({ "@type": "WebSite", "@id": base + "/#website", name: "MYM", url: base + "/", inLanguage: ["en", "fa"], publisher: { "@id": personId } });
+  }
+  if (base && project) {
+    graph.push({
+      "@type": "BreadcrumbList",
+      itemListElement: [[c.home, url()], [c.work, url("work")], [project[lang].name, url(route)]]
+        .map(([label, path], index) => ({ "@type": "ListItem", position: index + 1, name: label, item: base + path })),
+    });
+  }
+  const schema = graph.length
+    ? `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replaceAll("<", "\\u003c")}</script>`
+    : "";
+  return `<!doctype html><html lang="${lang}" dir="${fa ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#091e2c"><title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="website"><meta property="og:locale" content="${fa ? "fa_IR" : "en_US"}"><meta name="twitter:card" content="summary_large_image">${schema}${tags}${preview || secure || route === "404" ? '<meta name="robots" content="noindex,nofollow">' : ""}<link rel="icon" href="/assets/mym-logo.jpg"><link rel="stylesheet" href="/assets/site.css">${chat ? '<link rel="stylesheet" href="/assets/chat.css">' : ""}<script type="module" src="/assets/site.js"></script>${route === "" ? '<link rel="stylesheet" href="/assets/orbit.css"><script type="module" src="/assets/orbit.js"></script>' : ""}${secure ? '<script type="module" src="/assets/workspace.js"></script>' : ""}</head><body data-route="${route}"><a href="#main" class="skip">${c.skip}</a>${header}<main id="main">${body}</main>${footer}${chatPanel}</body></html>`;
 }
