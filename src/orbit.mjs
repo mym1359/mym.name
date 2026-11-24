@@ -132,12 +132,12 @@ function activate() {
   const copy = scene.parentElement.querySelector(".hero-copy");
   const updateLights = createLetterLights();
   let copyTop = 0;
-  // All three inclined orbits use the same projection as their stars.
+  // The three inclined orbits extend beyond the frame and pass behind the copy.
   const tracks = [0.16, -0.32, 0.45].map((tilt, i) =>
     Array.from({length: 181}, (_, step) => {
       const t = step * Math.PI / 90;
-      const x = Math.cos(t) * (1.28 - i * 0.09);
-      const y = Math.sin(t) * (0.64 + i * 0.08);
+      const x = Math.cos(t) * (1.48 - i * 0.12);
+      const y = Math.sin(t) * (0.34 + i * 0.09);
       return [x * Math.cos(tilt) - y * Math.sin(tilt),
         x * Math.sin(tilt) + y * Math.cos(tilt), Math.sin(t) * 0.36];
     })
@@ -185,10 +185,8 @@ function activate() {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     copyTop = copy.getBoundingClientRect().top - rect.top;
     centerX = width * 0.5;
-    const skyHeight = Math.max(1, copyTop - 80);
-    centerY = 80 + skyHeight / 2;
-    // A single pixel scale preserves the geometry in portrait and landscape.
-    scale = Math.min(width * 0.365, height * 0.5, skyHeight * 0.64);
+    centerY = width <= 740 ? (80 + copyTop) * 0.5 : height * 0.45;
+    scale = Math.min(width, height) * 0.53;
     sky.width = canvas.width;
     sky.height = canvas.height;
     const bg = sky.getContext("2d");
@@ -200,7 +198,7 @@ function activate() {
     const radius = scale * 1.30;
     for (const [x, y, size, opacity, warm] of galaxy) {
       bg.fillStyle = `rgba(${warm ? "254,189,144" : "155,214,231"},${opacity})`;
-      bg.fillRect(centerX + x * radius, centerY + y * radius, size, size);
+      bg.fillRect(centerX + x * width * 0.73, centerY + y * radius, size, size);
     }
     queue();
   }
@@ -216,8 +214,8 @@ function activate() {
         c = y * cp - b * sp,
         d = y * sp + b * cp;
       const k = (3.8 / (3.8 - d)) * scale * zoom;
-      let px = centerX + a * k,
-        py = centerY + c * k;
+      let px = centerX + a * k * (width * 0.53 / scale),
+        py = centerY + c * k * (height * 0.50 / scale);
       if (hover && bend && !drag && !reduced.matches) {
         const dx = px - hover.x,
           dy = py - hover.y,
