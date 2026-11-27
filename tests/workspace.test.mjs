@@ -213,8 +213,12 @@ test("Static pages provide per-language links, indexable content and private rou
       if (route.startsWith("work/")) {
         const json = JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)[1]);
         const trail = json["@graph"].find(node => node["@type"] === "BreadcrumbList").itemListElement;
-        assert.equal(trail.length, 3);
-        assert.equal(trail.at(-1).item, "https://example.test/" + (lang === "fa" ? "fa/" : "") + route + "/");
+        const segments = route.split("/");
+        const origin = "https://example.test/" + (lang === "fa" ? "fa/" : "");
+        assert.deepEqual(
+          trail.map(({ item }) => item),
+          [origin, ...segments.map((_, index) => origin + segments.slice(0, index + 1).join("/") + "/")],
+        );
       }
       assert.equal(
         html.includes("noindex,nofollow"),

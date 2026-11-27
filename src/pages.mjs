@@ -1,9 +1,11 @@
 import {orbitSection} from "./orbit-section.mjs";
 import { copy, name, projects, pathFor } from "./content.mjs";
+import { initiativeRoute, mortgageProject, mortgageProjectRoute, projectResources, relatedRepositories } from "./mortgage-project.mjs";
 export const routes = [
   "",
   "work",
   ...projects.map((p) => "work/" + p.id),
+  mortgageProjectRoute,
   "expertise",
   "about",
   "portal",
@@ -47,8 +49,10 @@ export function render(lang, route, base, live, preview = false) {
     other = lang === "fa" ? "en" : "fa",
     fa = lang === "fa";
   const project = projects.find((p) => "work/" + p.id === route),
+    article = route === mortgageProjectRoute ? mortgageProject[lang] : null,
+    initiative = projects.find((p) => p.id === "initiative")[lang],
     secure = ["portal", "admin"].includes(route);
-  const pageTitle = project
+  const pageTitle = article?.title || (project
     ? project[lang].name + " · " + project[lang].subtitle
     : route === "404"
       ? c.notFound
@@ -59,8 +63,9 @@ export function render(lang, route, base, live, preview = false) {
           portal: c.signTitle,
           admin: c.dashboardTitle,
           privacy: c.privacyTitle,
-        }[route] || c.seo.homeTitle;
+        }[route] || c.seo.homeTitle);
   const desc =
+    article?.summary ||
     project?.[lang].summary ||
     {
       work: c.seo.workDescription,
@@ -76,7 +81,7 @@ export function render(lang, route, base, live, preview = false) {
     ["work", "expertise", "about"]
       .map(
         (k) =>
-          `<a ${route === k || (k === "work" && project) ? 'aria-current="page"' : ""} href="${url(k)}">${c[k]}</a>`,
+          `<a ${route === k || (k === "work" && (project || article)) ? 'aria-current="page"' : ""} href="${url(k)}">${c[k]}</a>`,
       )
       .join("");
   const language = `<a class="language" href="${pathFor(other, route === "404" ? "" : route)}" lang="${other}" hreflang="${other}">${icon("globe")}${c.language}</a>`;
@@ -106,9 +111,24 @@ export function render(lang, route, base, live, preview = false) {
   }
   const metrics = `<div class="metric-band"><div class="wrap metrics">${c.metrics.map(([v, l]) => `<div><strong>${v}</strong><span>${l}</span></div>`).join("")}</div></div>`;
   const hero = route === "" ? orbitSection({lang,c,eye,btn,url}) : "";
+  const resourceLinks = (links) =>
+    `<ul class="project-resources">${links.map((link) => `<li><a href="${esc(link.url)}">${esc(link[lang])}</a></li>`).join("")}</ul>`;
+  function initiativeProject() {
+    const p = mortgageProject[lang];
+    return `<section class="wrap prose section" aria-labelledby="initiative-project"><div class="initiative-feature"><h2 id="initiative-project">${esc(p.title)}</h2><p>${esc(p.summary)}</p>${btn("primary", url(mortgageProjectRoute), esc(p.articleLink))}${resourceLinks(projectResources)}</div></section>`;
+  }
+  function mortgageArticle() {
+    const heading = `<header class="detail-hero"><div class="wrap prose section"><a class="crumb" href="${url(initiativeRoute)}">${esc(initiative.name)}</a><div class="article-heading"><h1 id="mortgage-title">${esc(article.title)}</h1><p>${esc(article.summary)}</p></div></div></header>`;
+    const findings = `<dl class="article-findings">${article.findings.map(([value, label]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
+    const figure = `<figure class="project-figure"><img src="/art/mortgage-review.webp" alt="${esc(article.imageAlt)}" width="1200" height="790"><figcaption>${esc(article.caption)}</figcaption></figure>`;
+    const sections = article.sections.map(({ title, paragraphs, links }) =>
+      `<section class="article-section"><h2>${esc(title)}</h2>${paragraphs.map((paragraph) => `<p>${esc(paragraph)}</p>`).join("")}${resourceLinks(links)}</section>`,
+    ).join("");
+    return `<article aria-labelledby="mortgage-title">${heading}<div class="wrap prose section project-article">${findings}${figure}${sections}<section class="article-section"><h2>${esc(article.resourceTitle)}</h2>${resourceLinks(projectResources.slice(1))}</section><section class="article-section"><h2>${esc(article.relatedTitle)}</h2><p>${esc(article.relatedSummary)}</p>${resourceLinks(relatedRepositories)}</section></div></article>${contact}`;
+  }
   function detail() {
     const p = project[lang];
-    return `<section class="detail-hero"><div class="wrap section"><a class="crumb" href="${url("work")}">${c.back}</a><div class="detail-split"><div>${eye(project.type === "bank" ? c.bank : c.rd)}<h1>${p.name}</h1><h2>${p.subtitle}</h2><p>${p.summary}</p></div><img width="750" height="422" src="/art/${project.id}.webp" alt=""></div></div></section><section class="wrap prose section">${p.parts.map((s, i) => `<h2>${[c.context, c.concept, c.stage][i]}</h2><p>${s}</p>`).join("")}</section>${contact}`;
+    return `<section class="detail-hero"><div class="wrap section"><a class="crumb" href="${url("work")}">${c.back}</a><div class="detail-split"><div>${eye(project.type === "bank" ? c.bank : c.rd)}<h1>${p.name}</h1><h2>${p.subtitle}</h2><p>${p.summary}</p></div><img width="750" height="422" src="/art/${project.id}.webp" alt=""></div></div></section>${route === initiativeRoute ? initiativeProject() : ""}<section class="wrap prose section">${p.parts.map((s, i) => `<h2>${[c.context, c.concept, c.stage][i]}</h2><p>${s}</p>`).join("")}</section>${contact}`;
   }
   function sign() {
     const admin = route === "admin";
@@ -118,6 +138,7 @@ export function render(lang, route, base, live, preview = false) {
   if (route === "")
     body = hero + metrics + work() + services() + about() + contact;
   else if (project) body = detail();
+  else if (article) body = mortgageArticle();
   else if (route === "work") body = work(true) + contact;
   else if (route === "expertise") body = services(true) + contact;
   else if (route === "about") body = about(true) + metrics + contact;
@@ -130,7 +151,7 @@ export function render(lang, route, base, live, preview = false) {
     canonical = base + url(route);
   const tags =
     base && !secure && route !== "404"
-      ? `<link rel="canonical" href="${canonical}">${["en", "fa", "x-default"].map((l) => `<link rel="alternate" hreflang="${l}" href="${base + pathFor(l === "fa" ? "fa" : "en", route)}">`).join("")}<meta property="og:url" content="${canonical}"><meta property="og:image" content="${base}/art/${project?.id || "hero"}.webp">`
+      ? `<link rel="canonical" href="${canonical}">${["en", "fa", "x-default"].map((l) => `<link rel="alternate" hreflang="${l}" href="${base + pathFor(l === "fa" ? "fa" : "en", route)}">`).join("")}<meta property="og:url" content="${canonical}"><meta property="og:image" content="${base}/art/${article ? "mortgage-review" : project?.id || "hero"}.webp">`
       : "";
   const graph = [];
   const personId = base + "/#mym";
@@ -148,15 +169,27 @@ export function render(lang, route, base, live, preview = false) {
   if (base && !route) {
     graph.push({ "@type": "WebSite", "@id": base + "/#website", name: "MYM", url: base + "/", inLanguage: ["en", "fa"], publisher: { "@id": personId } });
   }
-  if (base && project) {
+  if (base && (project || article)) {
+    const crumbs = [[c.home, url()], [c.work, url("work")]];
+    if (article) crumbs.push([initiative.name, url(initiativeRoute)]);
+    crumbs.push([article?.title || project[lang].name, url(route)]);
     graph.push({
       "@type": "BreadcrumbList",
-      itemListElement: [[c.home, url()], [c.work, url("work")], [project[lang].name, url(route)]]
+      itemListElement: crumbs
         .map(([label, path], index) => ({ "@type": "ListItem", position: index + 1, name: label, item: base + path })),
     });
   }
+  if (base && article) {
+    graph.push({
+      "@type": "Article", headline: article.title, description: article.summary,
+      inLanguage: lang, url: canonical, image: base + "/art/mortgage-review.webp",
+      author: { "@type": "Person", "@id": personId, name: name[lang] },
+    });
+  }
+  // Count the article under the existing initiative analytics page.
+  const visitRoute = article ? initiativeRoute : route;
   const schema = graph.length
     ? `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replaceAll("<", "\\u003c")}</script>`
     : "";
-  return `<!doctype html><html lang="${lang}" dir="${fa ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#091e2c"><title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="website"><meta property="og:locale" content="${fa ? "fa_IR" : "en_US"}"><meta name="twitter:card" content="summary_large_image">${schema}${tags}${preview || secure || route === "404" ? '<meta name="robots" content="noindex,nofollow">' : ""}<link rel="icon" href="/assets/mym-logo.jpg"><link rel="stylesheet" href="/assets/site.css">${chat ? '<link rel="stylesheet" href="/assets/chat.css">' : ""}<script type="module" src="/assets/site.js"></script>${route === "" ? '<link rel="stylesheet" href="/assets/orbit.css"><script type="module" src="/assets/orbit.js"></script>' : ""}${secure ? '<script type="module" src="/assets/workspace.js"></script>' : ""}</head><body data-route="${route}"><a href="#main" class="skip">${c.skip}</a>${header}<main id="main">${body}</main>${footer}${chatPanel}</body></html>`;
+  return `<!doctype html><html lang="${lang}" dir="${fa ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#091e2c"><title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:type" content="${article ? "article" : "website"}"><meta property="og:locale" content="${fa ? "fa_IR" : "en_US"}"><meta name="twitter:card" content="summary_large_image">${schema}${tags}${preview || secure || route === "404" ? '<meta name="robots" content="noindex,nofollow">' : ""}<link rel="icon" href="/assets/mym-logo.jpg"><link rel="stylesheet" href="/assets/site.css">${chat ? '<link rel="stylesheet" href="/assets/chat.css">' : ""}<script type="module" src="/assets/site.js"></script>${route === "" ? '<link rel="stylesheet" href="/assets/orbit.css"><script type="module" src="/assets/orbit.js"></script>' : ""}${secure ? '<script type="module" src="/assets/workspace.js"></script>' : ""}</head><body data-route="${visitRoute}"><a href="#main" class="skip">${c.skip}</a>${header}<main id="main">${body}</main>${footer}${chatPanel}</body></html>`;
 }
