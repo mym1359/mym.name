@@ -1,0 +1,82 @@
+{
+  "prototypeVersion": "1.0.0",
+  "evidence": "Hand-written synthetic rule checks",
+  "count": 8,
+  "matchingExpectations": 8,
+  "immediateCatchUpFits": 2,
+  "candidateWithinBudget": 6,
+  "cases": [
+    {
+      "id": "timing",
+      "name": "Timing mismatch",
+      "expected": "shift",
+      "actual": "shift",
+      "immediateCatchUpFitsMonthlyBudget": true,
+      "candidateWithinBudget": true,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "split",
+      "name": "Temporary shortfall",
+      "expected": "spread-3",
+      "actual": "spread-3",
+      "immediateCatchUpFitsMonthlyBudget": false,
+      "candidateWithinBudget": true,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "manual",
+      "name": "No room for a plan",
+      "expected": null,
+      "actual": null,
+      "immediateCatchUpFitsMonthlyBudget": false,
+      "candidateWithinBudget": false,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "fee",
+      "name": "Stretched budget",
+      "expected": "spread-6",
+      "actual": "spread-6",
+      "immediateCatchUpFitsMonthlyBudget": false,
+      "candidateWithinBudget": true,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "exact",
+      "name": "Exact budget fit",
+      "expected": "spread-2",
+      "actual": "spread-2",
+      "immediateCatchUpFitsMonthlyBudget": false,
+      "candidateWithinBudget": true,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "early",
+      "name": "Due day still too early",
+      "expected": "spread-2",
+      "actual": "spread-2",
+      "immediateCatchUpFitsMonthlyBudget": true,
+      "candidateWithinBudget": true,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "cents",
+      "name": "Uneven cent amounts",
+      "expected": "spread-3",
+      "actual": "spread-3",
+      "immediateCatchUpFitsMonthlyBudget": false,
+      "candidateWithinBudget": true,
+      "positiveBudgetCheck": true
+    },
+    {
+      "id": "negative",
+      "name": "Negative household margin",
+      "expected": null,
+      "actual": null,
+      "immediateCatchUpFitsMonthlyBudget": false,
+      "candidateWithinBudget": false,
+      "positiveBudgetCheck": true
+    }
+  ]
+}
