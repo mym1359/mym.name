@@ -1,11 +1,14 @@
 import {orbitSection} from "./orbit-section.mjs";
 import { copy, name, projects, pathFor } from "./content.mjs";
 import { initiativeRoute, mortgageProject, mortgageProjectRoute, projectResources, relatedRepositories } from "./mortgage-project.mjs";
+import { installmentDemoUrl, installmentProject, installmentProjectRoute } from "./installment-project.mjs";
+
 export const routes = [
   "",
   "work",
   ...projects.map((p) => "work/" + p.id),
   mortgageProjectRoute,
+  installmentProjectRoute,
   "expertise",
   "about",
   "portal",
@@ -49,7 +52,9 @@ export function render(lang, route, base, live, preview = false) {
     other = lang === "fa" ? "en" : "fa",
     fa = lang === "fa";
   const project = projects.find((p) => "work/" + p.id === route),
-    article = route === mortgageProjectRoute ? mortgageProject[lang] : null,
+    installment = route === installmentProjectRoute,
+    article = installment ? installmentProject[lang] : route === mortgageProjectRoute ? mortgageProject[lang] : null,
+    articleArt = installment ? "initiative" : "mortgage-review",
     initiative = projects.find((p) => p.id === "initiative")[lang],
     secure = ["portal", "admin"].includes(route);
   const pageTitle = article?.title || (project
@@ -117,18 +122,23 @@ export function render(lang, route, base, live, preview = false) {
     const p = mortgageProject[lang];
     return `<section class="wrap prose section" aria-labelledby="initiative-project"><div class="initiative-feature"><h2 id="initiative-project">${esc(p.title)}</h2><p>${esc(p.summary)}</p>${btn("primary", url(mortgageProjectRoute), esc(p.articleLink))}${resourceLinks(projectResources)}</div></section>`;
   }
-  function mortgageArticle() {
-    const heading = `<header class="detail-hero"><div class="wrap prose section"><a class="crumb" href="${url(initiativeRoute)}">${esc(initiative.name)}</a><div class="article-heading"><h1 id="mortgage-title">${esc(article.title)}</h1><p>${esc(article.summary)}</p></div></div></header>`;
+  function installmentFeature() {
+    const p = installmentProject[lang];
+    return `<section class="wrap prose section" aria-labelledby="installment-project"><div class="initiative-feature"><h2 id="installment-project">${esc(p.title)}</h2><p>${esc(p.summary)}</p>${btn("primary", url(installmentProjectRoute), esc(p.articleLink))}</div></section>`;
+  }
+  function projectArticle() {
+    const articleId = installment ? "installment-title" : "mortgage-title";
+    const heading = `<header class="detail-hero"><div class="wrap prose section"><a class="crumb" href="${url(initiativeRoute)}">${esc(initiative.name)}</a><div class="article-heading"><h1 id="${articleId}">${esc(article.title)}</h1><p>${esc(article.summary)}</p></div></div></header>`;
     const findings = `<dl class="article-findings">${article.findings.map(([value, label]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join("")}</dl>`;
-    const figure = `<figure class="project-figure"><img src="/art/mortgage-review.webp" alt="${esc(article.imageAlt)}" width="1200" height="790"><figcaption>${esc(article.caption)}</figcaption></figure>`;
+    const figure = installment ? btn("primary", installmentDemoUrl, esc(article.demoLink)) : `<figure class="project-figure"><img src="/art/mortgage-review.webp" alt="${esc(article.imageAlt)}" width="1200" height="790"><figcaption>${esc(article.caption)}</figcaption></figure>`;
     const sections = article.sections.map(({ title, paragraphs, links }) =>
       `<section class="article-section"><h2>${esc(title)}</h2>${paragraphs.map((paragraph) => `<p>${esc(paragraph)}</p>`).join("")}${resourceLinks(links)}</section>`,
     ).join("");
-    return `<article aria-labelledby="mortgage-title">${heading}<div class="wrap prose section project-article">${findings}${figure}${sections}<section class="article-section"><h2>${esc(article.resourceTitle)}</h2>${resourceLinks(projectResources.slice(1))}</section><section class="article-section"><h2>${esc(article.relatedTitle)}</h2><p>${esc(article.relatedSummary)}</p>${resourceLinks(relatedRepositories)}</section></div></article>${contact}`;
+    return `<article aria-labelledby="${articleId}">${heading}<div class="wrap prose section project-article">${findings}${figure}${sections}${installment ? "" : `<section class="article-section"><h2>${esc(article.resourceTitle)}</h2>${resourceLinks(projectResources.slice(1))}</section><section class="article-section"><h2>${esc(article.relatedTitle)}</h2><p>${esc(article.relatedSummary)}</p>${resourceLinks(relatedRepositories)}</section>`}</div></article>${contact}`;
   }
   function detail() {
     const p = project[lang];
-    return `<section class="detail-hero"><div class="wrap section"><a class="crumb" href="${url("work")}">${c.back}</a><div class="detail-split"><div>${eye(project.type === "bank" ? c.bank : c.rd)}<h1>${p.name}</h1><h2>${p.subtitle}</h2><p>${p.summary}</p></div><img width="750" height="422" src="/art/${project.id}.webp" alt=""></div></div></section>${route === initiativeRoute ? initiativeProject() : ""}<section class="wrap prose section">${p.parts.map((s, i) => `<h2>${[c.context, c.concept, c.stage][i]}</h2><p>${s}</p>`).join("")}</section>${contact}`;
+    return `<section class="detail-hero"><div class="wrap section"><a class="crumb" href="${url("work")}">${c.back}</a><div class="detail-split"><div>${eye(project.type === "bank" ? c.bank : c.rd)}<h1>${p.name}</h1><h2>${p.subtitle}</h2><p>${p.summary}</p></div><img width="750" height="422" src="/art/${project.id}.webp" alt=""></div></div></section>${route === initiativeRoute ? initiativeProject() + installmentFeature() : ""}<section class="wrap prose section">${p.parts.map((s, i) => `<h2>${[c.context, c.concept, c.stage][i]}</h2><p>${s}</p>`).join("")}</section>${contact}`;
   }
   function sign() {
     const admin = route === "admin";
@@ -138,8 +148,8 @@ export function render(lang, route, base, live, preview = false) {
   if (route === "")
     body = hero + metrics + work() + services() + about() + contact;
   else if (project) body = detail();
-  else if (article) body = mortgageArticle();
-  else if (route === "work") body = work(true) + contact;
+  else if (article) body = projectArticle();
+  else if (route === "work") body = work(true) + installmentFeature() + contact;
   else if (route === "expertise") body = services(true) + contact;
   else if (route === "about") body = about(true) + metrics + contact;
   else if (secure) body = sign();
@@ -151,7 +161,7 @@ export function render(lang, route, base, live, preview = false) {
     canonical = base + url(route);
   const tags =
     base && !secure && route !== "404"
-      ? `<link rel="canonical" href="${canonical}">${["en", "fa", "x-default"].map((l) => `<link rel="alternate" hreflang="${l}" href="${base + pathFor(l === "fa" ? "fa" : "en", route)}">`).join("")}<meta property="og:url" content="${canonical}"><meta property="og:image" content="${base}/art/${article ? "mortgage-review" : project?.id || "hero"}.webp">`
+      ? `<link rel="canonical" href="${canonical}">${["en", "fa", "x-default"].map((l) => `<link rel="alternate" hreflang="${l}" href="${base + pathFor(l === "fa" ? "fa" : "en", route)}">`).join("")}<meta property="og:url" content="${canonical}"><meta property="og:image" content="${base}/art/${article ? articleArt : project?.id || "hero"}.webp">`
       : "";
   const graph = [];
   const personId = base + "/#mym";
@@ -182,7 +192,7 @@ export function render(lang, route, base, live, preview = false) {
   if (base && article) {
     graph.push({
       "@type": "Article", headline: article.title, description: article.summary,
-      inLanguage: lang, url: canonical, image: base + "/art/mortgage-review.webp",
+      inLanguage: lang, url: canonical, image: base + "/art/" + articleArt + ".webp",
       author: { "@type": "Person", "@id": personId, name: name[lang] },
     });
   }

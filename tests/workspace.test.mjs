@@ -227,6 +227,19 @@ test("Static pages provide per-language links, indexable content and private rou
     }
 });
 
+test("Both portfolio languages link to the installment study and hosted demo", () => {
+  const route = "work/initiative/installment-repayment-review";
+  for (const lang of ["en", "fa"]) {
+    const prefix = lang === "fa" ? "/fa/" : "/";
+    for (const page of ["work", "work/initiative"]) {
+      assert.ok(render(lang, page, "", false).includes('href="' + prefix + route + '/"'));
+    }
+    const study = render(lang, route, "", false);
+    assert.ok(study.includes('href="/demos/installment-repayment-review/"'));
+    assert.ok(study.includes("mym.name/tree/main/projects/installment-repayment-review"));
+  }
+});
+
 test("Analytics endpoint rejects unrecognised requests before writing", async () => {
   const old = process.env.SITE_URL;
   process.env.SITE_URL = "https://example.test";

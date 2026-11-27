@@ -6,7 +6,7 @@
   "description": "English and Persian portfolio and client workspace for MYM’s applied AI and banking consultancy.",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs projects/installment-repayment-review/tests/*.test.mjs && node projects/installment-repayment-review/scripts/evaluate.mjs --check"
   },
   "engines": {
     "node": ">=22"

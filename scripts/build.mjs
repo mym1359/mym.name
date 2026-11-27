@@ -33,6 +33,11 @@ if (base && new URL(base).protocol !== "https:")
 await rm(dist, { recursive: true, force: true });
 await mkdir(assets, { recursive: true });
 await cp(path.join(root, "public"), dist, { recursive: true });
+await cp(
+  path.join(root, "projects/installment-repayment-review/demo"),
+  path.join(dist, "demos/installment-repayment-review"),
+  { recursive: true },
+);
 for (const n of [400, 500, 600])
   await cp(
     path.join(
