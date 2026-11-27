@@ -6,9 +6,10 @@ A bilingual portfolio and consultation workspace for Mohammad Yadollah Moghaddam
 
 ## Run locally
 
-Use Node.js 22 or newer and npm.
+Use Node.js 22 or newer and npm. Initialize the public research submodule after cloning.
 
 ```sh
+git submodule update --init
 npm ci
 npm test
 npm run build
@@ -54,6 +55,7 @@ The server calls Groq directly using `openai/gpt-oss-120b`. Create a key in a Gr
 
 ## Site content and domain changes
 
+- The [Installment Repayment Review repository](https://github.com/mym1359/installment-repayment-review) owns the demo, case-study copy, and tests. The site pins a revision in `projects/installment-repayment-review`. To publish a new revision, advance that Git submodule commit and rerun the site tests and build.
 - Edit `src/content.mjs` for the bilingual portfolio copy and `src/workspace-copy.mjs` for portal text.
 - The supplied MYM mark, navy/teal/orange palette, local Poppins and Vazirmatn fonts, and brand tagline guide the design. Project artwork is illustrative. No internal bank screenshots or records are included.
 - Public pages are generated as HTML. Each locale has its own titles, descriptions, reciprocal language links, social metadata and sitemap entries. Account pages are marked noindex. The Supabase SDK loads only when a real account workspace is configured.

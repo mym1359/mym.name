@@ -1,0 +1,3 @@
+[submodule "installment-repayment-review"]
+	path = projects/installment-repayment-review
+	url = https://github.com/mym1359/installment-repayment-review.git

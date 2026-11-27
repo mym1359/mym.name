@@ -236,7 +236,7 @@ test("Both portfolio languages link to the installment study and hosted demo", (
     }
     const study = render(lang, route, "", false);
     assert.ok(study.includes('href="/demos/installment-repayment-review/"'));
-    assert.ok(study.includes("mym.name/tree/main/projects/installment-repayment-review"));
+    assert.ok(study.includes("https://github.com/mym1359/installment-repayment-review"));
   }
 });
 
